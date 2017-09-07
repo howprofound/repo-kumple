@@ -1,0 +1,23 @@
+{{#workouts}}
+<article class="workout">
+	<header>
+		{{title}} <time>{{date}}</time>
+	</header>
+	<div class="workout-body collapsed">
+		<table class="workout-table">
+			<thead>
+				<tr>
+					<th>Name</th><th>Comment</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{#exercises}}
+					<tr>
+						<td>{{name}}</td><td>{{comment}}</td>
+					</tr>
+				{{/exercises}}
+			</tbody>
+		</table>
+	</div>
+</article>
+{{/workouts}}
