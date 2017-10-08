@@ -1,7 +1,14 @@
+const express = require('express')
+const router = express.Router()
+const path = require('path')
 
-const noteRoutes = require('./note_routes');
+const workouts 		= require('./workouts')
 
-module.exports = function(app, db) {
-  noteRoutes(app, db);
-  // Other route groups could go here, in the future
-};
+module.exports = (app, db) => {
+	app.use('/api', workouts(router, db))
+
+	app.get('*', (req, res) => {
+  		res.sendFile(path.join(__dirname, '../dist/index.html'));
+	});
+
+}
