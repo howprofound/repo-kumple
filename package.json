@@ -30,6 +30,7 @@
     "express": "^4.15.4",
     "mongoose": "^4.11.11",
     "rxjs": "^5.1.0",
+    "socket.io": "^2.0.3",
     "zone.js": "^0.8.4"
   },
   "devDependencies": {

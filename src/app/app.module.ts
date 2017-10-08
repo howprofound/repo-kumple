@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule } from '@angular/forms';
 
 
 import { MatSidenavModule, MatToolbarModule, MatButtonModule } from '@angular/material';
@@ -33,7 +34,8 @@ const ROUTES = [
     RouterModule.forRoot(ROUTES),
     MatSidenavModule,
     MatToolbarModule,
-    MatButtonModule
+    MatButtonModule,
+    FormsModule
   ],
   providers: [WorkoutsService],
   bootstrap: [AppComponent]

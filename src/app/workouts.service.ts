@@ -1,15 +1,27 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
-import 'rxjs/add/operator/map';
+
+import { Subject } from 'rxjs/Subject';
+import { Observable } from 'rxjs/Observable';
+import * as io from 'socket.io-client';
 
 @Injectable()
 export class WorkoutsService {
-
-  constructor(private http: Http) { }
-
-  // Get all posts from the API
-  getAllWorkouts() {
-    return this.http.get('/workouts')
-      .map(res => res.json());
+  private socket;
+  
+  sendMessage(message){
+    this.socket.emit('add-message', message);    
   }
+  
+  getMessages() {
+    let observable = new Observable(observer => {
+      this.socket = io();
+      this.socket.on('message', (data) => {
+        observer.next(data);    
+      });
+      return () => {
+        this.socket.disconnect();
+      };  
+    })     
+    return observable;
+  }  
 }
