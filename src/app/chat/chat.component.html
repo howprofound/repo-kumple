@@ -1,0 +1,13 @@
+<div>
+	<img src="https://lmarie7b.files.wordpress.com/2015/04/peets_logo1.png"/>
+	<mat-card>
+		<mat-list>
+			<mat-list-item *ngFor="let message of messages">
+				{{message.content}}
+			</mat-list-item>
+		</mat-list>
+		<mat-form-field>
+	    	<input matInput (keydown)='sendMessage($event)' [(ngModel)]="message" placeholder="write something">
+	  	</mat-form-field>
+	</mat-card>
+</div>

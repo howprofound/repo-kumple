@@ -1,12 +1,13 @@
-.example-sidenav, .example-container {
-  height: 100%;
+mat-form-field {
+	width: 100%;
 }
-
-.example-container {
-  transition: none;
+.chat-card, .name-input {
+	width: 30%;
+	margin: auto;
 }
-.example-sidenav {
-  width: 200px;
+.not-my-message {
+	background-color: lightgrey;
 }
-
-
+span.filler {
+	flex: 1 1 auto;
+}

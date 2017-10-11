@@ -1,0 +1,14 @@
+<mat-card>
+	<img src="https://lmarie7b.files.wordpress.com/2015/04/peets_logo1.png"/>
+	<form #f="ngForm" (ngSubmit)="onSubmit(f.value)" >
+		<mat-form-field>
+		  <input matInput placeholder="login" name="username" autofocus ngModel [disabled]="isLoggingIn">
+		</mat-form-field>
+		<mat-form-field>
+		  <input matInput placeholder="password" type="password" name="password" ngModel [disabled]="isLoggingIn">
+		</mat-form-field>
+		<button mat-raised-button color="primary" type="submit">Login</button>
+	</form>
+</mat-card>
+
+<mat-spinner *ngIf="isLoggingIn" [diameter]="50"></mat-spinner>

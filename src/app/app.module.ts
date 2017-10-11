@@ -1,43 +1,58 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 
 
-import { MatSidenavModule, MatToolbarModule, MatButtonModule } from '@angular/material';
+import { MatCardModule, MatListModule, MatIconModule, MatInputModule, MatButtonModule, MatProgressSpinnerModule, MatSnackBarModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
-import { WorkoutsComponent } from './workouts/workouts.component';
-import { WorkoutsService } from './workouts.service';
+import { ChatService } from './chat.service';
+import { AuthService } from './auth.service';
+import { LoginComponent } from './login/login.component';
+import { ChatComponent } from './chat/chat.component';
+import { AuthGuardService } from './auth-guard.service';
 
 const ROUTES = [
   {
     path: '',
-    redirectTo: 'workouts',
-    pathMatch: 'full'
+    component: LoginComponent
   },
   {
-    path: 'workouts',
-    component: WorkoutsComponent
+    path: 'chat',
+    component: ChatComponent,
+    pathMatch: 'full',
+    canActivate: [AuthGuardService]
   }
 ];
 
 @NgModule({
   declarations: [
     AppComponent,
-    WorkoutsComponent
+    LoginComponent,
+    ChatComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     RouterModule.forRoot(ROUTES),
-    MatSidenavModule,
-    MatToolbarModule,
+    HttpClientModule,
+    FormsModule,
+    MatCardModule,
+    MatListModule,
+    MatIconModule,
+    MatInputModule,
     MatButtonModule,
-    FormsModule
+    MatProgressSpinnerModule,
+    MatSnackBarModule
   ],
-  providers: [WorkoutsService],
+  providers: [
+    ChatService,
+    AuthService,
+    AuthGuardService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
