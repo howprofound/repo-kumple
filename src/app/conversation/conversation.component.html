@@ -1,6 +1,6 @@
 <mat-card>
 	<mat-card-content #scrollMe [scrollTop]="scrollMe.scrollHeight">
-		<div class="message-container" *ngFor="let message of messages" [class.mine]="message.author !== id">
+		<div class="message-container" *ngFor="let message of messages" [class.mine]="message.author === id">
 			<span class="spacer"></span><span class="message-wrapper" [@newMessage]>{{message.content}}</span>
 		</div>
 	</mat-card-content>
