@@ -10,13 +10,11 @@ import { ConversationComponent } from '../conversation/conversation.component'
 	animations: [
 		trigger('slideLeft', [
 			transition(':enter', [
-				style({
-					transform: 'translateX(-350%)'
-				}), animate(1000, keyframes([
-						style({ transform: 'translateX(-100%)', offset: 0 }),
-						style({ transform: 'translateX(-100%)', offset: 0.5 }),
-					  	style({ transform: 'translateX(0)', offset: 1 }),
-					]))
+				animate(1000, keyframes([
+					style({ transform: 'translateX(-100%)', offset: 0 }),
+					style({ transform: 'translateX(-100%)', offset: 0.5 }),
+				  	style({ transform: 'translateX(0)', offset: 1 }),
+				]))
 		   ])
 		]),
 		trigger('slideTop', [

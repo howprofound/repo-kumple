@@ -1,9 +1,14 @@
 .mat-card {
 	width: 100%;
+	height: 75%;
+	margin: 20px;
 	.mat-card-content {
-		height: 40vh;
+		height: 85%;
 		overflow-y: auto;
 		overflow-x: hidden;
+	}
+	.mat-card-actions {
+		height: 15%;
 	}
 	.mat-card-content.spinner-content {
 		.mat-spinner {

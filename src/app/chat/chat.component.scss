@@ -1,10 +1,8 @@
 div.main-content {
-	width: 25%;
+	width: 35%;
 	margin: auto;
 	text-align: center;
-	img {
-		width: 100%;
-	}
+	height: 100%;
 	.mat-spinner {
 		margin: auto;
 	}
@@ -14,7 +12,6 @@ div.main-content {
 	width: 100%;
 	height: calc(100% - 64px);
 }
-
 .mat-sidenav {
 	width: 200px;
 	transform: translateX(0);
@@ -27,6 +24,7 @@ div.main-content {
 	z-index: 10;
 }
 .mat-list-item {
+	background-color: white;
 	&:hover {
 		background-color: lightgrey;
 		cursor: pointer;

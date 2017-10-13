@@ -10,7 +10,6 @@
 		</mat-list>
 	</mat-sidenav>
 	<div class="main-content">
-		<img src="https://lmarie7b.files.wordpress.com/2015/04/peets_logo1.png"/>
 		<conversation *ngIf="isConnected; else elseBlock" [id]="id"></conversation>
 		<ng-template #elseBlock> <!-- display spinner if not connected to the chat -->
 				<mat-spinner [diameter]="150"></mat-spinner>
