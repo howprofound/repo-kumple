@@ -1,7 +1,18 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { ChatService } from '../chat.service'
-import { trigger, style, animate, transition, keyframes } from '@angular/animations';
+import { trigger, style, animate, transition, keyframes, state } from '@angular/animations';
 import { ConversationComponent } from '../conversation/conversation.component'
+
+class User {
+  username: string;
+  id: string;
+  isActive: boolean;
+  constructor(username, id, isActive) {
+  	this.username = username
+  	this.id = id
+  	this.isActive = isActive
+  }
+}
 
 @Component({
 	selector: 'app-chat',
@@ -27,7 +38,7 @@ import { ConversationComponent } from '../conversation/conversation.component'
 	],
 	host: {
 		'[@slideLeft]': '',
-		'[@slideTop]': '',
+		'[@slideTop]': ''
 	}
 })
 
@@ -42,11 +53,11 @@ export class ChatComponent implements OnInit {
 		this.id = id
 		this.isConnected = true
 		this.users = users.map(user => {
-			return {
-				username: user.username,
-				id: user.id,
-				isActive: connectedUsers.includes(user.id)
-			}
+			return new User(
+				user.username,
+				user.id,
+				connectedUsers.includes(user.id)
+			)
 		}).filter(user => user.id !== this.id)
 		this.userStream = this.chatService.monitorUsers().subscribe(data => {
 			this.users.forEach(user => {
