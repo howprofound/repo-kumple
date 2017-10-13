@@ -1,0 +1,13 @@
+<mat-card>
+	<mat-card-content #scrollMe [scrollTop]="scrollMe.scrollHeight">
+		<div class="message-container" *ngFor="let message of messages" [class.mine]="message.author !== id">
+			<span class="spacer"></span><span class="message-wrapper" [@newMessage]>{{message.content}}</span>
+		</div>
+	</mat-card-content>
+	<mat-card-actions>
+		<mat-form-field>
+	    	<input matInput (keydown)='sendMessage($event)' [(ngModel)]="message" autofocus>
+	    	<mat-hint align="start">Write something...</mat-hint>
+	  	</mat-form-field>
+  	</mat-card-actions>
+</mat-card>

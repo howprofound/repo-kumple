@@ -6,7 +6,17 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 
 
-import { MatCardModule, MatListModule, MatIconModule, MatInputModule, MatButtonModule, MatProgressSpinnerModule, MatSnackBarModule } from '@angular/material';
+import { 
+        MatCardModule, 
+        MatListModule, 
+        MatIconModule, 
+        MatInputModule, 
+        MatButtonModule, 
+        MatProgressSpinnerModule, 
+        MatSnackBarModule,
+        MatSidenavModule,
+        MatToolbarModule
+      } from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { ChatService } from './chat.service';
@@ -14,6 +24,7 @@ import { AuthService } from './auth.service';
 import { LoginComponent } from './login/login.component';
 import { ChatComponent } from './chat/chat.component';
 import { AuthGuardService } from './auth-guard.service';
+import { ConversationComponent } from './conversation/conversation.component';
 
 const ROUTES = [
   {
@@ -32,7 +43,8 @@ const ROUTES = [
   declarations: [
     AppComponent,
     LoginComponent,
-    ChatComponent
+    ChatComponent,
+    ConversationComponent
   ],
   imports: [
     BrowserModule,
@@ -46,7 +58,9 @@ const ROUTES = [
     MatInputModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatSidenavModule,
+    MatToolbarModule
   ],
   providers: [
     ChatService,

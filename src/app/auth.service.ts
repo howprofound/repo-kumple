@@ -6,7 +6,6 @@ import { tokenNotExpired } from 'angular2-jwt';
 
 @Injectable()
 export class AuthService {
-
 	constructor(private http: HttpClient) {}
 
 	login(credentials) {
