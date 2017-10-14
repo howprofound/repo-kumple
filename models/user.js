@@ -9,7 +9,12 @@ var UserSchema = new mongoose.Schema({
 	password: {
 		type: String,
 		required: true
-	} 
+	},
+	publicConversations:
+	{
+		type: [mongoose.Schema.Types.ObjectId],
+		ref: 'PublicConversation'
+	}
 });
 
 UserSchema.methods.validPassword = function(password) {
