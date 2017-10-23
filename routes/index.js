@@ -56,6 +56,13 @@ module.exports = (app, db, io) => {
 				}
 			})
 			io.emit('user-change', {id: dcUser, isActive: false})
+			Users.findOneAndUpdate({
+				_id: dcUser
+			}, {
+				$set: { lastLogin: Date.now() }
+			}, err => {
+				if(err) console.log(err)
+			})
 			console.log("user disconnected")
 		})
 		socket.on("new-message", message => {
