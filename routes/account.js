@@ -46,7 +46,7 @@ module.exports = () => {
 			console.log(decoded.id, req.body.id)
 			Conversations.findOne({
 				isPrivate: true,
-				users: { $all: [decoded.id,  req.body.id]}
+				users: { $in: [decoded.id, req.body.id]}
 			}, (conversationErr, conversation) => {	
 				console.log(conversation)
 				if(conversationErr) console.log(err)
@@ -61,7 +61,7 @@ module.exports = () => {
 				else {
 					Conversations.create({
 						title: "private",
-						isPrivage: true,
+						isPrivate: true,
 						messages: [],
 						users: [decoded.id, req.body.id]
 					}, (err, newConversation) => {
