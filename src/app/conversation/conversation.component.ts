@@ -25,7 +25,7 @@ export class ConversationComponent implements OnInit {
 		this.messageStream = this.chatService.getMessages().subscribe(message => {
 			this.messages.push(message)
 		})
-		this.chatService.getHistory(this.id).subscribe(history => {
+		this.chatService.getHistory(this.conversationId).subscribe(history => {
 			this.messages = history
 		})
 	}
