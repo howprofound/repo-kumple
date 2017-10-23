@@ -8,7 +8,7 @@ const express 		= require('express'),
 	io 				= require('socket.io')(http),
 	port 			= 8000
 
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false, limit: '5mb'}))
 	.use(bodyParser.json())
 	.use(express.static(path.join(__dirname, 'dist')))
 

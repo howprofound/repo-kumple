@@ -5,6 +5,9 @@ const socketioJwt = require('socketio-jwt');
 
 const Messages = require('../models/message')
 const Users = require('../models/user')
+const Conversations = require('../models/conversation')
+
+var mongoose = require('mongoose');
 
 let connectedUsers = []
 module.exports = (app, db, io) => {
@@ -21,61 +24,70 @@ module.exports = (app, db, io) => {
 	}))
 
 	io.on('connection', (socket) => {
-		console.log('user connected')
-	    socket.on('hello', (id, fn) => {
-	    	connectedUsers.push({
-	    		id: id, 
-	    		socket: socket.id
-	    	})
-	    	io.emit('user-change', { id: id, connected: true })
-	    	Users.find({}, (err, users) => {
-    			fn(users.map(user => {
-    				return {
-    					username: user.username,
-    					id: user._id
-    				}
-    			}), connectedUsers.map(cUser => {
-    				return cUser.id
-    			}))
-    			Messages.find({}, (err, messages) => {
-    				messages.forEach(message => {
-    					socket.emit('message', { type: 'new-message', content: message.content, author: message.author })
-    				})
-    				
-    			})
-	    	})
-	    })
-	    socket.on('disconnect', function() {
-	    	let disconnectedUser;
-	    	connectedUsers = connectedUsers.filter(user => {
-	    		if(user.socket !== socket.id) {
-	    			return true
-	    		}
-	    		else {
-	    			disconnectedUser = user.id
-	    			return false
-	    		}
-	    		
-	    	})
-	    	io.emit('user-change', { id: disconnectedUser, connected: false })
-	        console.log('user disconnected')
-	    });
-	    socket.on('add-message', (message) => {
-	        io.emit('message', { type: 'new-message', content: message.content , author: message.author })
-	        Messages.create({
-	        	content: message.content,
-	        	author: message.author
-	        }, (err) => {
-	        	console.log(err)
-	        })
-	    });
-	    socket.on('clear', (message) => {
-	        io.emit('message', {
-	        	type: 'clear'
-	        })
-	        Messages.remove({}, (err) => {
-	        	console.log(err)
-	        })
-	    });
-	});
+		console.log("user connected")
+		socket.on('hello', (id, callback) => {
+			Users.find({_id: {"$ne": id}}, (err, users) => {
+				if(err) console.log(err)
+				else {
+					callback(users.map(user => {
+						return {
+							id: user._id,
+							username: user.username,
+							isActive: connectedUsers.find(cUser => cUser.id == user._id) ? true : false // == because we want to convert _id.toString()
+						}
+					}))
+				}
+				socket.broadcast.emit('user-change', {id: id, isActive: true})
+				connectedUsers.push({
+					id: id,
+					socketId: socket.id
+				})
+				console.log(connectedUsers)
+			})
+		})
+		socket.on("disconnect", () => {
+			let dcUser;
+			connectedUsers = connectedUsers.filter(user => {
+				if(user.socketId !== socket.id)
+					return true
+				else {
+					dcUser = user.id
+					return false
+				}
+			})
+			io.emit('user-change', {id: dcUser, isActive: false})
+			console.log("user disconnected")
+		})
+		socket.on("new-message", message => {
+			Messages.create({
+				content: message.content,
+				author: message.author
+			}, (err, messageInstance) => {
+				if(err) console.log(err)
+					console.log(message.author, message.conversation)
+				Conversations.findOneAndUpdate({
+					isPrivate: true,
+					users: { $all: [message.author, message.conversation] }
+				}, {
+					$push: { messages: messageInstance._id}
+				}, err => {
+					if(err) console.log(err)
+					console.log("all ok!")
+					console.log(message.conversation)
+					let target = connectedUsers.find(user => user.id === message.conversation)
+					console.log(target)
+					if(target) {
+						io.to(target.socketId).emit("new-message", {
+							content: message.content,
+							author: message.author
+						})
+					}
+					socket.emit("new-message", {
+						content: message.content,
+						author: message.author
+					})
+				})
+			})
+		})
+	})
 }

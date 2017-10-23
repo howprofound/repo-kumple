@@ -1,4 +1,9 @@
 <mat-card>
+	<mat-card-header color="primary">
+		<mat-card-title>
+			{{title}}
+		</mat-card-title>
+	</mat-card-header>
 	<mat-card-content #scrollMe [scrollTop]="scrollMe.scrollHeight">
 		<div class="message-container" *ngFor="let message of messages" [class.mine]="message.author === id">
 			<span class="spacer"></span><span class="message-wrapper" [@newMessage]>{{message.content}}</span>

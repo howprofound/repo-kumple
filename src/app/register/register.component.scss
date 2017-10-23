@@ -1,25 +1,15 @@
 .mat-card {
 	width: 22%;
 	margin: auto;
-	img {
-		width: 100%;
-		height: 150px;
-		margin-bottom: 20px;
-	}
 	a {
 		text-decoration: underline;
-		float: right;
 		color: lightgrey;
+		float: right;
 	}
 }
 
 .top-spacer {
 	height: 100px;
-}
-
-.mat-spinner {
-	margin: auto;
-	width: 50px;
 }
 
 form {
@@ -43,4 +33,3 @@ form {
 		flex: 0 0 100%;
 	}
 }
-

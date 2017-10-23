@@ -2,18 +2,25 @@
 <mat-toolbar color="primary" [@slideTop]>Awesome Chat</mat-toolbar>
 <mat-sidenav-container>
 	<mat-sidenav mode="side" opened="true" disableClose="true" id="left-sidenav" [@slideLeft]>
+		<h4>People</h4>
 		<mat-list>
-			<mat-list-item *ngFor="let user of users">
+			<mat-list-item *ngFor="let user of users" (click)="startPrivateConversation(user)">
 				<img matListAvatar src="https://forums.rowery.org/images/user4.png" alt="...">
 			 	<span class="user-wrapper">{{user.username}}</span> <span class="active-status" [class.active]="user.isActive"></span>	
 			</mat-list-item>
 		</mat-list>
 	</mat-sidenav>
 	<div class="main-content">
-		<conversation *ngIf="isConnected; else elseBlock" [id]="id"></conversation>
-		<ng-template #elseBlock> <!-- display spinner if not connected to the chat -->
-				<mat-spinner [diameter]="150"></mat-spinner>
-				<h3>Connecting. Pleases wait...</h3>	
+		<conversation *ngIf="isConversationStarted; else connectBlock" [id]="id" [conversationId]="conversationId"
+			[title]="conversationTitle"></conversation>
+		<ng-template #connectBlock> <!-- display spinner or welcome screen if not connected to the chat -->
+
+				<mat-spinner *ngIf="!isConnected; else welcomeBlock"[diameter]="150"></mat-spinner>
+				<ng-template #welcomeBlock>
+					<div class="welcome-block" [@show]>
+						Welcome to our <u>awesome chat</u>!
+					</div>
+				</ng-template>
 		</ng-template>
 	</div>
 </mat-sidenav-container>

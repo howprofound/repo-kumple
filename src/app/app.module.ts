@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 
 import { 
@@ -25,6 +25,7 @@ import { LoginComponent } from './login/login.component';
 import { ChatComponent } from './chat/chat.component';
 import { AuthGuardService } from './auth-guard.service';
 import { ConversationComponent } from './conversation/conversation.component';
+import { RegisterComponent } from './register/register.component';
 
 const ROUTES = [
   {
@@ -36,6 +37,11 @@ const ROUTES = [
     component: ChatComponent,
     pathMatch: 'full',
     canActivate: [AuthGuardService]
+  },
+  {
+    path: 'register',
+    component: RegisterComponent,
+    pathMatch: 'full'
   }
 ];
 
@@ -44,7 +50,8 @@ const ROUTES = [
     AppComponent,
     LoginComponent,
     ChatComponent,
-    ConversationComponent
+    ConversationComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
@@ -52,6 +59,7 @@ const ROUTES = [
     RouterModule.forRoot(ROUTES),
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
     MatCardModule,
     MatListModule,
     MatIconModule,

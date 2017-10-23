@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core'
-import { HttpClient} from '@angular/common/http'
-import 'rxjs/add/operator/map';
-import { Response } from '@angular/http'
+import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { tokenNotExpired } from 'angular2-jwt';
 
 @Injectable()
@@ -10,6 +8,9 @@ export class AuthService {
 
 	login(credentials) {
 		return this.http.post('/api/login', credentials)
+	}
+	register(data) {
+		return this.http.post('/api/register', data)
 	}
 	loggedIn() {
   		return tokenNotExpired()

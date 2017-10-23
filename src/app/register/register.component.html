@@ -1,0 +1,17 @@
+<div class="top-spacer"></div>
+<mat-card>
+	<a routerLink="">Login</a>
+	<h1>Sign up!</h1>
+	<form #f="ngForm" (ngSubmit)="onSubmit(f)">
+		<mat-form-field>
+	  		<input matInput placeholder="Username" name="username" autofocus requiredn ngModel>
+		</mat-form-field>
+		<mat-form-field>
+	  		<input matInput placeholder="Password" type="password" name="password" required ngModel>
+		</mat-form-field>
+		<mat-form-field>
+	  		<input matInput placeholder="E-mail" type="email" name="email" required ngModel>
+		</mat-form-field>
+		<button mat-raised-button color="primary" type="submit">Register</button>
+	</form>
+</mat-card>

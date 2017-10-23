@@ -14,6 +14,8 @@ import { trigger, style, animate, transition } from '@angular/animations';
 })
 export class ConversationComponent implements OnInit {
 	@Input() id: string;
+	@Input() conversationId: string;
+	@Input() title: string;
 	message: string;
 	messages = [];
 	messageStream;
@@ -23,11 +25,14 @@ export class ConversationComponent implements OnInit {
 		this.messageStream = this.chatService.getMessages().subscribe(message => {
 			this.messages.push(message)
 		})
+		this.chatService.getHistory(this.id).subscribe(history => {
+			this.messages = history
+		})
 	}
 
 	sendMessage(e) {
 		if(e.keyCode === 13) {
-			this.chatService.sendMessage(this.message, this.id)
+			this.chatService.sendMessage(this.message, this.conversationId)
 			this.message = ''
 		}
 	}

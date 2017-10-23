@@ -1,7 +1,7 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { ChatService } from '../chat.service'
 import { trigger, style, animate, transition, keyframes, state } from '@angular/animations';
-import { ConversationComponent } from '../conversation/conversation.component'
+
 
 class User {
   username: string;
@@ -34,6 +34,13 @@ class User {
 					transform: 'translateY(-100%)'
 				}), animate(500)
 		   ])
+		]),
+		trigger('show', [
+			transition(':enter', [
+				style({
+					opacity: '0'
+				}), animate(2000)
+		   ])
 		])
 	],
 	host: {
@@ -43,38 +50,39 @@ class User {
 })
 
 export class ChatComponent implements OnInit {
-	id: string;
-	users = [];
-	isConnected: boolean;
-	userStream;
-
+	id: string
+	users = []
+	isConnected: boolean
+	isConversationStarted: boolean
+	userStream
+	conversationId: string
+	conversationTitle: string
 	constructor(private chatService: ChatService) { }
-	onConnect(id, users, connectedUsers) {
+	onConnect(id, users) {
+		console.log(users)
 		this.id = id
 		this.isConnected = true
-		this.users = users.map(user => {
-			return new User(
-				user.username,
-				user.id,
-				connectedUsers.includes(user.id)
-			)
-		}).filter(user => user.id !== this.id)
+		this.users = users
 		this.userStream = this.chatService.monitorUsers().subscribe(data => {
-			this.users.forEach(user => {
-				if(user.id === data['id']) {
-					if(data['connected']) {
-						user.isActive = true
-					}
-					else { 
-						user.isActive = false
-					}
-				}
-			})
+			this.users
+				.find(user => user.id === data['id'])
+				.isActive = data['isActive']
 		})
+
 	}
 
+	startPrivateConversation(conversation) {
+		console.log(conversation)
+		this.conversationId = conversation.id,
+		this.conversationTitle = conversation.username
+		this.isConversationStarted = true
+	}
 	ngOnInit() {
 		this.isConnected = false
+		this.isConversationStarted = false
 		this.chatService.connect(this.onConnect.bind(this))
+	}
+	ngOnDestroy() {
+		this.userStream.unsubscribe()
 	}
 }

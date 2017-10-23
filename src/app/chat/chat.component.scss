@@ -3,17 +3,27 @@ div.main-content {
 	margin: auto;
 	text-align: center;
 	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	.mat-spinner {
-		margin: auto;
+		flex: 0 0 auto;
+	}
+	.welcome-block {
+		font-size: 25px;
+		font-family: Tahoma, Verdana, Segoe, sans-serif;
+	}
+	conversation {
+		width: 100%;
 	}
 }
-.mat-sidenav-container, .my-content {
+.mat-sidenav-container {
 	margin: 0;
 	width: 100%;
 	height: calc(100% - 64px);
 }
 .mat-sidenav {
-	width: 200px;
+	width: 300px;
 	transform: translateX(0);
 	box-shadow: 3px 0 6px rgba(0,0,0,.24);
 }
@@ -23,11 +33,19 @@ div.main-content {
 	position: relative;
 	z-index: 10;
 }
+h4 {
+	font-family: Tahoma, Verdana, Segoe, sans-serif;
+	color: steelgrey;
+	padding-left: 21px;
+	margin-bottom: 0px;
+
+}
 .mat-list-item {
 	background-color: white;
 	&:hover {
 		background-color: lightgrey;
 		cursor: pointer;
+		transition: background-color 1000ms;
 	}
 	span.user-wrapper {
 		font-family: Helvetica;

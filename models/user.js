@@ -10,10 +10,13 @@ var UserSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	},
-	publicConversations:
-	{
-		type: [mongoose.Schema.Types.ObjectId],
-		ref: 'PublicConversation'
+	lastLogin: {
+		type: Date,
+		default: Date.now()
+	},
+	email: {
+		type: String,
+		required: true
 	}
 });
 
