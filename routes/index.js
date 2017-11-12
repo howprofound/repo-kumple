@@ -8,6 +8,7 @@ const Users = require('../models/user')
 const Conversations = require('../models/conversation')
 
 const chat_controller = require('../controllers/chat_controller')
+const conversation_controller = require('../controllers/conversation_controller')
 
 let connectedUsers = []
 module.exports = (app, db, io) => {

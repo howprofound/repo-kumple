@@ -25,7 +25,7 @@ exports.conversation_history = (req, res) => {
                         res.send({
                             status: "success",
                             messages: messages,
-                            conversationId: conversationId
+                            conversationId: conversation._id
                         })
                     })
                 }
