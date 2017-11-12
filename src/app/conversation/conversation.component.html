@@ -6,7 +6,8 @@
 	</mat-card-header>
 	<mat-card-content #scrollMe [scrollTop]="scrollMe.scrollHeight">
 		<div class="message-container" *ngFor="let message of messages" [class.mine]="message.author === id">
-			<span class="spacer"></span><span class="message-wrapper" [@newMessage]>{{message.content}}</span>
+			<span class="spacer"></span><span class="message-wrapper" [class.delivered]="message.wasDelivered" 
+				[class.seen]="message.wasSeen" [@newMessage]>{{message.content}} </span>
 		</div>
 	</mat-card-content>
 	<mat-card-actions>

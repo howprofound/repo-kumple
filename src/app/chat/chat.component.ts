@@ -73,11 +73,14 @@ export class ChatComponent implements OnInit {
 				.find(user => user._id === data['id'])
 				.isActive = data['isActive']
 		})
+		this.chatService.getMessages().subscribe(message => {
+			this.chatService.announceMessage(message)
+		})
 		this.isConnected = true
 	}
 
 	startPrivateConversation(conversation) {
-		this.conversationId = conversation.id,
+		this.conversationId = conversation._id,
 		this.conversationTitle = conversation.username
 		this.isConversationStarted = true
 	}
@@ -88,7 +91,7 @@ export class ChatComponent implements OnInit {
 			this.users = data['users'].map(user => {
 				return Object.assign(user, { isActive: false })
 			})
-			this.chatService.connect()
+			this.id = this.chatService.connect()
 			this.chatService.getActiveUsers().subscribe(activeUsers => this.onConnect(activeUsers))
 		})
 	}

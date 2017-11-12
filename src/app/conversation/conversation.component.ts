@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core'
+import { Component, OnInit, Input, OnChanges } from '@angular/core'
 import { ChatService } from '../chat.service'
 import { trigger, style, animate, transition } from '@angular/animations';
 
@@ -13,31 +13,65 @@ import { trigger, style, animate, transition } from '@angular/animations';
 	]
 })
 
-export class ConversationComponent implements OnInit {
+export class ConversationComponent implements OnInit, OnChanges {
 	@Input() id: string;
-	@Input() conversationId: string;
+	@Input() addresse: string;
 	@Input() title: string;
+	conversationId: string;
 	message: string;
 	messages = [];
 	messageStream;
 	constructor(private chatService: ChatService) { }
-
+	getHistory() {
+		this.chatService.getHistory(this.addresse).subscribe(history => {
+			console.log(history)
+			this.messages = history['messages'].sort((a,b) => {
+				a = new Date(a.date)
+    			b = new Date(b.date)
+    			return a < b ? -1 : a > b ? 1 : 0
+			})
+			this.conversationId = history['conversationId']
+			this.chatService.sendSeenMessage(this.conversationId, this.id)
+		})
+	}
 	ngOnInit() {
 		this.messageStream = this.chatService.messageAnnounced.subscribe(message => {
 			this.messages.push(message)
+			this.chatService.sendSeenMessage(this.conversationId, this.id)
 		})
-		this.chatService.getHistory(this.conversationId).subscribe(history => {
-			this.messages = history
+		this.getHistory()
+		this.chatService.getMessageSeen().subscribe(id => {
+			this.messages = this.messages.map(message => {
+				if(!message.wasSeen) {
+					return Object.assign(message, { wasSeen: true })
+				}
+				else {
+					return message
+				}
+			})
 		})
 	}
-
+ 	ngOnChanges() {
+ 		this.getHistory()
+ 	}
+	getMessageAck(id) {
+		this.messages = this.messages.map(message => {
+			if(!message._id) {
+				return Object.assign(message, { wasDelivered: true, _id: id })
+			}
+			else {
+				return message
+			}
+		})
+	}
 	sendMessage(e) {
 		if(e.keyCode === 13) {
-			this.chatService.sendMessage(this.message, this.conversationId)
+			this.chatService.sendMessage(this.message, this.addresse, this.conversationId, this.getMessageAck.bind(this))
 			this.messages.push({
 				content: this.message,
-				wasSend: false,
-				author: this.id
+				wasDelivered: false,
+				author: this.id,
+				wasSeen: false
 			})
 			this.message = ''
 		}

@@ -48,7 +48,6 @@
 	 	word-wrap: break-word;
 	 	max-width: 80%;
 	 	color: black;
-	 	
 	 	font-size: 15px;
 	}
 }
@@ -59,6 +58,13 @@
 	span.message-wrapper {
 		background-color: #3f51b5;
 		color: white;
-		
+		opacity: 0.2;
 	}
+	span.message-wrapper.delivered {
+		opacity: 1;
+	}
+	span.message-wrapper.delivered.seen {
+		background-color: #111111;
+	}
+
 }

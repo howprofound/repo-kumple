@@ -14,23 +14,40 @@ export class ChatService {
   messageAnnounced;
   constructor(private http: HttpClient) {
     this.messageSource = new Subject<string>()
-    this.messageAnnounced = this. messageSource.asObservable()
+    this.messageAnnounced = this.messageSource.asObservable()
     this.jwtHelper = new JwtHelper()
     this.token = localStorage.getItem('token')
   }
 
-  sendMessage(message, convId) {
-    this.socket.emit('new-message', { 
+  sendMessage(message, addresse, conversationId, ack) {
+    this.socket.emit('new_message', { 
       content: message, 
       author: this.jwtHelper.decodeToken(this.token).id, 
-      conversation: convId
-    })    
+      addresse: addresse,
+      conversationId: conversationId
+    }, ack)    
+  }
+
+  sendSeenMessage(conversationId, id) {
+    this.socket.emit('message_seen', {conversationId: conversationId, id: id})
+  }
+
+  getMessageSeen() {
+    let observable = new Observable(observer => {
+      this.socket.on('message_seen', data => {
+        observer.next(data)
+      })
+      return () => {
+        this.socket.disconnect()
+      }
+    })
+    return observable
   }
 
   getHistory(id) {
-    return this.http.post<any[]>('/api/conversation/history', {
-      token: this.token,
-      id: id
+    console.log(`/api/conversation/history/${id}`)
+    return this.http.get<any[]>(`/api/conversation/history/${id}`, { 
+      headers: new HttpHeaders().set('Authorization', this.token)
     })
   }
 
@@ -67,15 +84,17 @@ export class ChatService {
   	this.socket = io.connect('', {
       query: 'token=' + this.token
     })
+    let id = this.jwtHelper.decodeToken(this.token).id
     this.socket.on('connect', () => {
-      let id = this.jwtHelper.decodeToken(this.token).id
       this.socket.emit('join', id)
     })
+    return id
   }
 
   getMessages() {
     let observable = new Observable(observer => {
-      this.socket.on('new-message', data => {
+      this.socket.on('new_message', data => {
+        console.log(data)
         observer.next(data)
       })
       return () => {

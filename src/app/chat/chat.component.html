@@ -14,9 +14,12 @@
 	<div class="main-content">
 		<mat-spinner *ngIf="!isConnected; else welcomeBlock"[diameter]="150"></mat-spinner>
 		<ng-template #welcomeBlock>
-			<div class="welcome-block" [@show]>
+			<div class="welcome-block" [@show] *ngIf="!isConversationStarted; else convBlock">
 				Welcome to our <u>awesome chat</u>!
 			</div>
+			<ng-template #convBlock>
+				<conversation [id]="id" [addresse]="conversationId" [title]="conversationTitle"></conversation>
+			</ng-template>
 		</ng-template>
 	</div>
 </mat-sidenav-container>
