@@ -20,11 +20,12 @@ exports.conversation_history = (req, res) => {
                     })
                 }
                 else if (conversation) {
-                    Messages.find({ conversationId: conversation.id
+                    Messages.find({ conversationId: conversation._id
                     }, (messagesErr, messages) => {
                         res.send({
                             status: "success",
-                            messages: messages
+                            messages: messages,
+                            conversationId: conversationId
                         })
                     })
                 }
