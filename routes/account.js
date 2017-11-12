@@ -7,7 +7,7 @@ const Conversations = require('../models/conversation')
 const Messages = require('../models/message')
 var mongoose = require('mongoose');
 
-const account_controller = require('../controllers/account_controllers')
+const account_controller = require('../controllers/account_controller')
 const conversation_controller = require('../controllers/conversation_controller')
 
 module.exports = () => {
@@ -48,32 +48,6 @@ module.exports = () => {
 
 		})
 	})
-	router.post('/login', (req, res) => {
-		
-		Users.findOne({ username: req.body.username }, (err, user) => {
-			console.log(req.body)
-			if(err) {
-				res.send(err)
-			}
-			else if(!user) {
-				res.json({ success: false, message: 'Authentication failed. User not found.' })
-			}
-			else {
-				if(!user.validPassword(req.body.password)) {
-					res.json({ success: false, message: 'Authentication failed. Wrong password.' });
-				}
-				else {
-					let token = jwt.sign({id: user._id}, 'supersecretsecret', {
-						expiresIn: "2h"
-					})
-					res.json({
-						success: true,
-						message: "Welcome!",
-						token: token
-					})
-				}
-			}
-		})
-	})
+	router.post('/login', account_controller.user_login)
 	return router;
 }

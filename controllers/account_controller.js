@@ -50,3 +50,36 @@ exports.user_register = (req, res) => {
         }
     }) 
 }
+
+exports.user_login = (req, res) => {
+    Users.findOne({ username: req.body.username }, (err, user) => {
+        console.log(req.body)
+        if(err) {
+            res.send({
+                status: "error"
+            })
+        }
+        else if(!user) {
+            res.send({
+                status: "wrong_data"
+            })
+        }
+        else {
+            req.body.password = crypto.createHash('sha1').update(req.body.password).digest('hex')
+            if(!user.validPassword(req.body.password)) {
+                res.send({
+                    status: "wrong_data"
+                })
+            }
+            else {
+                let token = jwt.sign({id: user._id}, 'supersecretsecret', {
+                    expiresIn: "2h"
+                })
+                res.send({
+                    status: "success",
+                    token: token
+                })
+            }
+        }
+    })
+}
