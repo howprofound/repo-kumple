@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 
-var ConversationSchema = new mongoose.Schema({
+var GroupShema = new mongoose.Schema({
   title: String,
   users: [{
 	type: mongoose.Schema.Types.ObjectId,
@@ -8,8 +8,8 @@ var ConversationSchema = new mongoose.Schema({
   }],
   messages: [{
 	type: mongoose.Schema.Types.ObjectId,
-  	ref: 'Message'
+  	ref: 'Group_message'
   }]
 });
 
-module.exports = mongoose.model('Conversation', ConversationSchema, 'Conversation')
+module.exports = mongoose.model('Group', GroupShema, 'Group')
