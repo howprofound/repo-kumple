@@ -60,8 +60,6 @@ export class ChatComponent implements OnInit {
 	conversationTitle: string
 	constructor(private chatService: ChatService) { }
 	onConnect(activeUsers) {
-		console.log(activeUsers)
-		console.log(this.users)
 		this.users = this.users.map(user => {
 			if(activeUsers.find(activeUser => activeUser.id === user._id)) {
 				return Object.assign(user, { isActive: true })
