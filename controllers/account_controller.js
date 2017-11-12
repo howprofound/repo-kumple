@@ -1,10 +1,7 @@
-//const express = require('express')
-//const router = express.Router()
 const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
 
 const Users = require('../models/user')
-const crypto = require('crypto')
-//const mongoose = require('mongoose');
 
 exports.user_register = (req, res) => {
     Users.findOne({ username: req.body.username }, (err, user) => {
