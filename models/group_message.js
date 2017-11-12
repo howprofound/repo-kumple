@@ -10,10 +10,6 @@ var Group_messageSchema = new mongoose.Schema({
   	type: mongoose.Schema.Types.ObjectId,
   	ref: 'User'
   },
-  wasSeen: {
-  	type: Boolean,
-  	default: false
-  }
   wasSeenBy: [{
   type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
