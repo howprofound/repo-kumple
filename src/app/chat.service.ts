@@ -28,8 +28,8 @@ export class ChatService {
     }, ack)    
   }
 
-  sendSeenMessage(conversationId, id) {
-    this.socket.emit('message_seen', {conversationId: conversationId, id: id})
+  sendSeenMessage(conversationId, author) {
+    this.socket.emit('message_seen', { conversationId: conversationId, author: author })
   }
 
   getMessageSeen() {
