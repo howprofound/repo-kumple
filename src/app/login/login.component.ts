@@ -26,12 +26,17 @@ export class LoginComponent implements OnInit {
 	onSubmit(value) {
 		this.isLoggingIn = true
 		this.auth.login(value).subscribe(data => {
-			if(data['success']) {
-				localStorage.setItem('token', data['token'])
-				this.router.navigate(['/chat'])
-			}
-			else {
-				this.openSnackBar(data['message'])
+			switch(data['status']) {
+				case "wrong_data":
+					this.openSnackBar("Niepoprawne dane logowania :(")
+					break;
+				case "success":
+					localStorage.setItem('token', data['token'])
+					this.router.navigate(['/chat'])
+					break;
+				default: 
+					this.openSnackBar("Oops. Something went wrong :(")
+					break;
 			}
 			this.isLoggingIn = false
 		})

@@ -12,6 +12,7 @@ import { trigger, style, animate, transition } from '@angular/animations';
 		])
 	]
 })
+
 export class ConversationComponent implements OnInit {
 	@Input() id: string;
 	@Input() conversationId: string;
@@ -22,7 +23,7 @@ export class ConversationComponent implements OnInit {
 	constructor(private chatService: ChatService) { }
 
 	ngOnInit() {
-		this.messageStream = this.chatService.getMessages().subscribe(message => {
+		this.messageStream = this.chatService.messageAnnounced.subscribe(message => {
 			this.messages.push(message)
 		})
 		this.chatService.getHistory(this.conversationId).subscribe(history => {
@@ -33,6 +34,11 @@ export class ConversationComponent implements OnInit {
 	sendMessage(e) {
 		if(e.keyCode === 13) {
 			this.chatService.sendMessage(this.message, this.conversationId)
+			this.messages.push({
+				content: this.message,
+				wasSend: false,
+				author: this.id
+			})
 			this.message = ''
 		}
 	}

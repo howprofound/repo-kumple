@@ -3,14 +3,18 @@ import { Observable } from 'rxjs/Observable'
 import * as io from 'socket.io-client'
 import { JwtHelper } from 'angular2-jwt'
 import { HttpClient} from '@angular/common/http'
+import { Subject }    from 'rxjs/Subject'
 
 @Injectable()
 export class ChatService {
   private socket;
-  jwtHelper: JwtHelper;
-  token: string;
-
+  private jwtHelper: JwtHelper;
+  private token: string;
+  private messageSource : Subject<string>;
+  messageAnnounced;
   constructor(private http: HttpClient) {
+    this.messageSource = new Subject<string>()
+    this.messageAnnounced = this. messageSource.asObservable()
     this.jwtHelper = new JwtHelper()
     this.token = localStorage.getItem('token')
   }
@@ -23,10 +27,6 @@ export class ChatService {
     })    
   }
 
-  deleteMessages() {
-  	this.socket.emit('clear')
-  }
-
   getHistory(id) {
     return this.http.post<any[]>('/api/conversation/history', {
       token: this.token,
@@ -34,9 +34,13 @@ export class ChatService {
     })
   }
 
+  announceMessage(message) {
+    this.messageSource.next(message)
+  }
+
   monitorUsers() {
     let observable = new Observable(observer => {
-      this.socket.on('user-change', (data) => {
+      this.socket.on('user-change', data => {
         observer.next(data)
       })
       return () => {
@@ -61,7 +65,7 @@ export class ChatService {
 
   getMessages() {
     let observable = new Observable(observer => {
-      this.socket.on('new-message', (data) => {
+      this.socket.on('new-message', data => {
         observer.next(data)
       })
       return () => {

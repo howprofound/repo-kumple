@@ -55,11 +55,11 @@ export class ChatComponent implements OnInit {
 	isConnected: boolean
 	isConversationStarted: boolean
 	userStream
+	messageStream
 	conversationId: string
 	conversationTitle: string
 	constructor(private chatService: ChatService) { }
 	onConnect(id, users) {
-		console.log(users)
 		this.id = id
 		this.isConnected = true
 		this.users = users
@@ -68,11 +68,21 @@ export class ChatComponent implements OnInit {
 				.find(user => user.id === data['id'])
 				.isActive = data['isActive']
 		})
+		this.messageStream = this.chatService.getMessages().subscribe(data => {
+			if(data['author'] === this.conversationId) {
+				this.chatService.announceMessage(data)
+			}
+			else {
+				this.users.forEach(user => {
+					if(user.id === data['author'])
+						user.unreadMessages++
+				})
+			}
+		})
 
 	}
 
 	startPrivateConversation(conversation) {
-		console.log(conversation)
 		this.conversationId = conversation.id,
 		this.conversationTitle = conversation.username
 		this.isConversationStarted = true
