@@ -14,6 +14,10 @@ var Group_messageSchema = new mongoose.Schema({
   type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
+  groupId: {
+  	type: mongoose.Schema.Types.ObjectId,
+  	ref: 'Group'
+  }
 });
 
 module.exports = mongoose.model('Group_message', Group_messageSchema, 'Group_message')

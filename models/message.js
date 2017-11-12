@@ -17,6 +17,10 @@ var MessageSchema = new mongoose.Schema({
   wasSeen: {
   	type: Boolean,
   	default: false
+  },
+  conversationId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Conversation'
   }
 });
 
