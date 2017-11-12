@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 
-var MessageSchema = new mongoose.Schema({
+var Group_messageSchema = new mongoose.Schema({
   content: String,
   date: {
     type: Date,
@@ -10,14 +10,14 @@ var MessageSchema = new mongoose.Schema({
   	type: mongoose.Schema.Types.ObjectId,
   	ref: 'User'
   },
-  wasDelivered: {
-  	type: Boolean,
-  	default: false
-  },
   wasSeen: {
   	type: Boolean,
   	default: false
   }
+  wasSeenBy: [{
+  type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
 });
 
-module.exports = mongoose.model('Message', MessageSchema, 'Message')
+module.exports = mongoose.model('Group_message', Group_messageSchema, 'Group_message')
