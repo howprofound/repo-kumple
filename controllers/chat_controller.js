@@ -64,10 +64,11 @@ exports.new_message = (message, ack, socket) => {
     Messages.create({
         content: message.content,
         author: message.author,
-        wasDelivered: true,
+        wasDelivered: false,
         wasSeen: false,
         conversationId: message.conversationId
-    }, (err, message) => {
+
+    }, (err, messageInstance) => {
         if (err) {
             res.send({
                 status: "error"
@@ -76,9 +77,9 @@ exports.new_message = (message, ack, socket) => {
         else {
             let target = connectedUsers.find(user => user.id === message.addresse)
             if (target) {
-                socket.broadcast.to(target.socketId).emit("new_message", message)
+                socket.broadcast.to(target.socketId).emit("new_message", messageInstance)
             }
-            ack()
+            ack(messageInstance._id)
         }
     })
 }
