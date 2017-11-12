@@ -83,15 +83,16 @@ exports.new_message = (message, ack, socket) => {
     })
 }
 
-exports.message_seen = (messageId, socket) => {
-    Messages.findOneAndUpdate({ _id: messageId }, { $set: { wasSeen: true } }, (err, message) => {
+exports.message_seen = (conversation, socket) => {
+    Messages.update({ conversationId: conversation, wasSeen: false }, { $set: { wasSeen: true } }, { multi: true }, (err, messages) => {
         if(err) {
             console.log("error")
         }
-        else {
-            let target = connectedUsers.find(user => user.id === message.author.toString())
+        else if (messages.length() > 0) {
+            console.log(messages)
+            let target = connectedUsers.find(user => user.id === messages[0].author.toString())
             if (target) {
-                socket.broadcast.to(target.socketId).emit("message_seen", message._id)
+                socket.broadcast.to(target.socketId).emit("message_seen", conversation)
             }
         }
     })
