@@ -12,7 +12,7 @@ exports.conversation_history = (req, res) => {
             })
         }
         else {
-            Conversations.findOne({ users: { $in: [decoded.id, req.params.id] }
+            Conversations.findOne({ users: { $all: [decoded.id, req.params.id] }
             }, (conversationErr, conversation) => {
                 if (conversationErr) {
                     res.send({

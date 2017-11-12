@@ -65,15 +65,13 @@ exports.new_message = (message, ack, socket) => {
     Messages.create({
         content: message.content,
         author: message.author,
-        wasDelivered: false,
+        wasDelivered: true,
         wasSeen: false,
         conversationId: message.conversationId
 
     }, (err, messageInstance) => {
         if (err) {
-            res.send({
-                status: "error"
-            })
+            console.log("error")
         }
         else {
             let target = connectedUsers.find(user => user.id === message.addresse)
@@ -86,16 +84,14 @@ exports.new_message = (message, ack, socket) => {
 }
 
 exports.message_seen = (message, socket) => {
-    Messages.findOneAndUpdate({ _id: message.id }, { $set: { wasSeen: true } }, err => {
+    Messages.findOneAndUpdate({ _id: message.id }, { $set: { wasSeen: true } }, (err, message) => {
         if(err) {
-            res.send({
-                status: "error"
-            })
+            console.log("error")
         }
         else {
             let target = connectedUsers.find(user => user.id === message.author)
             if (targer) {
-                //socket.broadcast.to(targer.socketId).emit("message_seen", )
+                socket.broadcast.to(targer.socketId).emit("message_seen", message._id)
             }
         }
     })
