@@ -12,16 +12,11 @@
 		</mat-list>
 	</mat-sidenav>
 	<div class="main-content">
-		<conversation *ngIf="isConversationStarted; else connectBlock" [id]="id" [conversationId]="conversationId"
-			[title]="conversationTitle"></conversation>
-		<ng-template #connectBlock> <!-- display spinner or welcome screen if not connected to the chat -->
-
-				<mat-spinner *ngIf="!isConnected; else welcomeBlock"[diameter]="150"></mat-spinner>
-				<ng-template #welcomeBlock>
-					<div class="welcome-block" [@show]>
-						Welcome to our <u>awesome chat</u>!
-					</div>
-				</ng-template>
+		<mat-spinner *ngIf="!isConnected; else welcomeBlock"[diameter]="150"></mat-spinner>
+		<ng-template #welcomeBlock>
+			<div class="welcome-block" [@show]>
+				Welcome to our <u>awesome chat</u>!
+			</div>
 		</ng-template>
 	</div>
 </mat-sidenav-container>

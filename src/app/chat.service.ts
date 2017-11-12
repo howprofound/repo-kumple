@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 import { Observable } from 'rxjs/Observable'
 import * as io from 'socket.io-client'
 import { JwtHelper } from 'angular2-jwt'
-import { HttpClient} from '@angular/common/http'
+import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Subject }    from 'rxjs/Subject'
 
 @Injectable()
@@ -40,7 +40,7 @@ export class ChatService {
 
   monitorUsers() {
     let observable = new Observable(observer => {
-      this.socket.on('user-change', data => {
+      this.socket.on('user_change', data => {
         observer.next(data)
       })
       return () => {
@@ -50,16 +50,26 @@ export class ChatService {
     return observable
   }
 
-  connect(callback) {
+  getActiveUsers() {
+    let observable = new Observable(observer => {
+      this.socket.on('connected_users', users => {
+        observer.next(users)
+      })
+      return () => {
+        console.log("test")
+        this.socket.off('connected_users')
+      }
+    })
+    return observable
+  }
+
+  connect() {
   	this.socket = io.connect('', {
       query: 'token=' + this.token
     })
     this.socket.on('connect', () => {
       let id = this.jwtHelper.decodeToken(this.token).id
-      this.socket.emit('hello', id, users => {
-        console.log(users)
-        callback(id, users)
-      })
+      this.socket.emit('join', id)
     })
   }
 
@@ -74,4 +84,11 @@ export class ChatService {
     })     
     return observable
   }  
+
+  getData() {
+    console.log(this.token)
+    return this.http.get('/api/chat', { 
+      headers: new HttpHeaders().set('Authorization', this.token)
+    })
+  }
 }
