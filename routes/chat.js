@@ -7,12 +7,10 @@ const Users = require('../models/user')
 const Conversations = require('../models/conversation')
 const Messages = require('../models/message')
 
-const account_controller = require('../controllers/account_controller')
+const chat_controller = require('../controllers/chat_controller')
 
 module.exports = () => {
-	router.post('/register', account_controller.user_register)
-
-	router.post('/login', account_controller.user_login)
+	router.get('/chat', chat_controller.)
 
 	return router;
 }

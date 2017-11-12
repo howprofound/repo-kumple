@@ -7,12 +7,12 @@ const Users = require('../models/user')
 const Conversations = require('../models/conversation')
 const Messages = require('../models/message')
 
-const account_controller = require('../controllers/account_controller')
+const conversation_controller = require('../controllers/conversation_controller')
 
 module.exports = () => {
-	router.post('/register', account_controller.user_register)
+	router.get('/conversation', conversation_controller.conversation_create)
 
-	router.post('/login', account_controller.user_login)
+    router.get('/conversation/history', conversation_controller.conversation_history)
 
 	return router;
 }
