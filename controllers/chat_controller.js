@@ -83,8 +83,8 @@ exports.new_message = (message, ack, socket) => {
     })
 }
 
-exports.message_seen = (message, socket) => {
-    Messages.findOneAndUpdate({ _id: message.id }, { $set: { wasSeen: true } }, (err, message) => {
+exports.message_seen = (messageId, socket) => {
+    Messages.findOneAndUpdate({ _id: messageId }, { $set: { wasSeen: true } }, (err, message) => {
         if(err) {
             console.log("error")
         }
