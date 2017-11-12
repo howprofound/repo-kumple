@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 
 const Users = require('../models/user')
 const Conversations = require('../models/conversation')
+const Messages = require('../models/message')
 
 var connectedUsers = []
 
@@ -80,6 +81,22 @@ exports.new_message = (message, ack, socket) => {
                 socket.broadcast.to(target.socketId).emit("new_message", messageInstance)
             }
             ack(messageInstance._id)
+        }
+    })
+}
+
+exports.message_seen = (message, socket) => {
+    Messages.findOneAndUpdate({ _id: message.id }, { $set: { wasSeen: true } }, err => {
+        if(err) {
+            res.send({
+                status: "error"
+            })
+        }
+        else {
+            let target = connectedUsers.find(user => user.id === message.author)
+            if (targer) {
+                //socket.broadcast.to(targer.socketId).emit("message_seen", )
+            }
         }
     })
 }
