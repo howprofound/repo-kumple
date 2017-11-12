@@ -74,7 +74,6 @@ exports.new_message = (message, ack, socket) => {
             console.log("error")
         }
         else {
-            console.log(messageInstance)
             let target = connectedUsers.find(user => user.id === message.addresse)
             if (target) {
                 socket.broadcast.to(target.socketId).emit("new_message", messageInstance)
@@ -85,12 +84,12 @@ exports.new_message = (message, ack, socket) => {
 }
 
 exports.message_seen = (data, socket) => {
-    Messages.update({ conversationId: data.conversationId, wasSeen: false, author: { $ne: data.id } }, { $set: { wasSeen: true } }, { multi: true }, (err, messages) => {
+    Messages.update({ conversationId: data.conversationId, wasSeen: false, author: data.author }, { $set: { wasSeen: true } }, { multi: true }, (err, messages) => {
         if(err) {
             console.log("error")
         }
         else {
-            let target = connectedUsers.find(user => user.id === data.id)
+            let target = connectedUsers.find(user => user.id === data.author)
             if (target) {
                 socket.broadcast.to(target.socketId).emit("message_seen", data.conversationId)
             }
