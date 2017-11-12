@@ -60,34 +60,25 @@ exports.chat_disconnection = socket => {
     })
 }
 
-/*socket.on("new-message", message => {
+exports.new_message = (message, ack, socket) => {
     Messages.create({
         content: message.content,
-        author: message.author
-    }, (err, messageInstance) => {
-        if(err) console.log(err)
-            console.log(message.author, message.conversation)
-        Conversations.findOneAndUpdate({
-            isPrivate: true,
-            users: { $all: [message.author, message.conversation] }
-        }, {
-            $push: { messages: messageInstance._id}
-        }, err => {
-            if(err) console.log(err)
-            console.log("all ok!")
-            console.log(message.conversation)
-            let target = connectedUsers.find(user => user.id === message.conversation)
-            console.log(target)
-            if(target) {
-                io.to(target.socketId).emit("new-message", {
-                    content: message.content,
-                    author: message.author
-                })
-            }
-            socket.emit("new-message", {
-                content: message.content,
-                author: message.author
+        author: message.author,
+        wasDelivered: true,
+        wasSeen: false,
+        conversationId: message.conversationId
+    }, (err, message) => {
+        if (err) {
+            res.send({
+                status: "error"
             })
-        })
+        }
+        else {
+            let target = connectedUsers.find(user => user.id === message.addresse)
+            if (target) {
+                socket.broadcast.to(target.socketId).emit("new_message", message)
+            }
+            ack()
+        }
     })
-})*/
+}
