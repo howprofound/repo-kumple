@@ -22,6 +22,7 @@ export class ConversationComponent implements OnInit, OnChanges {
 	messages = [];
 	messageStream;
 	constructor(private chatService: ChatService) { }
+
 	getHistory() {
 		this.chatService.getHistory(this.addresse).subscribe(history => {
 			console.log(history)
@@ -31,13 +32,14 @@ export class ConversationComponent implements OnInit, OnChanges {
     			return a < b ? -1 : a > b ? 1 : 0
 			})
 			this.conversationId = history['conversationId']
-			this.chatService.sendSeenMessage(this.conversationId, this.id)
+			this.chatService.sendSeenMessage(this.conversationId, this.addresse)
 		})
 	}
+
 	ngOnInit() {
 		this.messageStream = this.chatService.messageAnnounced.subscribe(message => {
 			this.messages.push(message)
-			this.chatService.sendSeenMessage(this.conversationId, this.id)
+			this.chatService.sendSeenMessage(this.conversationId, this.addresse)
 		})
 		this.getHistory()
 		this.chatService.getMessageSeen().subscribe(id => {

@@ -74,7 +74,8 @@ export class ChatComponent implements OnInit {
 				.isActive = data['isActive']
 		})
 		this.chatService.getMessages().subscribe(message => {
-			this.chatService.announceMessage(message)
+			if(this.conversationId === message['author'])
+				this.chatService.announceMessage(message)
 		})
 		this.isConnected = true
 	}
