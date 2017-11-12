@@ -50,7 +50,7 @@ exports.chat_disconnection = socket => {
             return false
         }
     })
-    socket.broadcast.emit('user_change', {id: id, isActive: false})
+    socket.broadcast.emit('user_change', {id: dcUser, isActive: false})
     Users.findOneAndUpdate({
         _id: dcUser
     }, {
