@@ -91,7 +91,7 @@ exports.message_seen = (messageId, socket) => {
         else {
             let target = connectedUsers.find(user => user.id === message.author)
             if (target) {
-                socket.broadcast.to(targer.socketId).emit("message_seen", message._id)
+                socket.broadcast.to(target.socketId).emit("message_seen", message._id)
             }
         }
     })
