@@ -2,43 +2,18 @@ const express = require('express')
 const router = express.Router()
 const jwt = require('jsonwebtoken')
 
-const User = require('../models/user')
+const Users = require('../models/user')
 const Conversations = require('../models/conversation')
 const Messages = require('../models/message')
 var mongoose = require('mongoose');
-module.exports = () => {
-	router.post('/register', (req, res) => {
-		console.log(req.body)
-		User.create(req.body, (err, user) =>{
-			if(err) {
-				res.send({
-					status: "error",
-					user: null
-				})
-			}
-			res.send({
-				status: "ok",
-				token: jwt.sign({id: user._id}, 'supersecretsecret', {
-					expiresIn: "2h"
-				})
-			})
-		})
-	})
 
-	router.post('/conversation', (req, res) => {
-		console.log(req.body)
-		Conversations.create({
-			title: req.body.title,
-			isPrivate: req.body.isPrivate,
-			messages: req.body.messages,
-			users: req.body.users.map(user => {
-				return mongoose.Types.ObjectId(user)
-			})
-		}, (err, conversation) =>{
-			if(err) console.log(err)
-			res.send(conversation)
-		})
-	})
+const account_controller = require('../controllers/account_controllers')
+const conversation_controller = require('../controllers/conversation_controller')
+
+module.exports = () => {
+	router.post('/register', account_controller.user_register)
+
+	router.post('/conversation', conversation_controller.conversation_create)
 
 	router.post('/conversation/history', (req, res) => {
 		jwt.verify(req.body.token, 'supersecretsecret', (verificationErr, decoded) => {
@@ -74,7 +49,9 @@ module.exports = () => {
 		})
 	})
 	router.post('/login', (req, res) => {
-		User.findOne({ username: req.body.username }, (err, user) => {
+		
+		Users.findOne({ username: req.body.username }, (err, user) => {
+			console.log(req.body)
 			if(err) {
 				res.send(err)
 			}
