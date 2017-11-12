@@ -12,7 +12,9 @@ var mongoose = require('mongoose');
 let connectedUsers = []
 module.exports = (app, db, io) => {
 
-	app.use('/api', require('./account')(db))
+	app.use('/api', require('./account')())
+
+	app.use('/api/chat', require('./chat')())
 
 	app.get('*', (req, res) => {
   		res.sendFile(path.join(__dirname, '../dist/index.html'));
