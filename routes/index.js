@@ -16,6 +16,8 @@ module.exports = (app, db, io) => {
 
 	app.use('/api/chat', require('./chat')())
 
+	app.use('/api/conversation', require('./conversation')())
+
 	app.get('*', (req, res) => {
   		res.sendFile(path.join(__dirname, '../dist/index.html'));
 	})
@@ -29,5 +31,6 @@ module.exports = (app, db, io) => {
 		socket.on("join", id => chat_controller.chat_connection(id, socket))
 		socket.on("disconnect", () => chat_controller.chat_disconnection(socket))
 		socket.on("new_message", (message, ack) => conversation_controller.new_message(message, ack, socket))
+		socket.on("message_seen", message => chat_controller.message_seen(message, socket))
 	})
 }
