@@ -10,7 +10,7 @@ const Messages = require('../models/message')
 const chat_controller = require('../controllers/chat_controller')
 
 module.exports = () => {
-	router.get('/chat', chat_controller.)
+	router.get('/chat', chat_controller.load_chat_data)
 
 	return router;
 }
