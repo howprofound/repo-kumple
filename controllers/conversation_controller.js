@@ -2,6 +2,8 @@ const mongoose = require('mongoose')
 
 const Conversations = require('../models/conversation')
 const Messages = require('../models/message')
+const Groups = require('../models/group')
+const GroupMessages = require('../models/group_message')
 
 exports.conversation_history = (req, res) => {
     Conversations.findOne({ users: { $all: [req.userID, req.params.id] }
@@ -24,6 +26,36 @@ exports.conversation_history = (req, res) => {
         else {
             Conversations.create({ title: "New", users: [req.userID, req.params.id]
             }, (newConversationErr, newConversation) => {
+                res.send({
+                    status: "success",
+                    messages: []
+                })
+            })
+        }
+    })
+}
+
+exports.group_conversation_history = (req, res) => {
+    Groups.findOne({ users: { $all: req.users }, title: req.title
+    }, (groupErr, group) => {
+        if (groupErr) {
+            res.send({
+                status: "error"
+            })
+        }
+        else if (group) {
+            GroupMessages.find({ groupId: group._id
+            }, (messagesErr, messages) => {
+                res.send({
+                    status: "success",
+                    messages: messages,
+                    groupId: group._id
+                })
+            })
+        }
+        else {
+            GroupMessages.create({ title: "New Group", users: req.users
+            }, (newGroupErr, newGroup) => {
                 res.send({
                     status: "success",
                     messages: []

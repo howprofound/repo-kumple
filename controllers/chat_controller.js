@@ -1,6 +1,8 @@
 const Users = require('../models/user')
 const Conversations = require('../models/conversation')
 const Messages = require('../models/message')
+const Groups = require('../models/group')
+const GroupMessages = require('../models/group_message')
 
 var connectedUsers = []
 
@@ -80,6 +82,43 @@ exports.message_seen = (data, socket) => {
             let target = connectedUsers.find(user => user.id === data.author)
             if (target) {
                 socket.broadcast.to(target.socketId).emit("message_seen", data.conversationId)
+            }
+        }
+    })
+}
+
+exports.new_group_message = (message, ack, socket) => {
+    GroupMessages.create({
+        content: message.content,
+        author: message.author,
+        wasDelivered: true,
+        wasSeenBy: [],
+        groupId: message.groupId
+
+    }, (err, messageInstance) => {
+        if (err) {
+            console.log("error")
+        }
+        else {
+            let target = connectedUsers.find(user => user.id === message.addresse) // to do
+            if (target) {
+                socket.broadcast.to(target.socketId).emit("new_group_message", messageInstance)
+            }
+            ack(messageInstance._id)
+        }
+    })
+}
+
+exports.group_message_seen = (data, socket) => {
+    GroupMessages.update({ groupId: data.groupId, author: data.author, wasSeenBy: { $ne: data.whoRead } }, // to do
+        { $addToSet: { wasSeenBy: data.whoRead } }, { multi: true }, (err, messages) => {
+        if(err) {
+            console.log("error")
+        }
+        else {
+            let target = connectedUsers.find(user => user.id === data.author)
+            if (target) {
+                socket.broadcast.to(target.socketId).emit("group_message_seen", data.groupId)
             }
         }
     })

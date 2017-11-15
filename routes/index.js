@@ -46,5 +46,7 @@ module.exports = (app, db, io) => {
 		socket.on("disconnect", () => chat_controller.chat_disconnection(socket))
 		socket.on("new_message", (message, ack) => chat_controller.new_message(message, ack, socket))
 		socket.on("message_seen", message => chat_controller.message_seen(message, socket))
+		socket.on("new_group_message", (message, ack) => chat_controller.new_group_message(message, ack, socket))
+		socket.on("group_message_seen", message => chat_controller.group_message_seen(message, socket))
 	})
 }
