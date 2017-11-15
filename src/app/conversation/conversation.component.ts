@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core'
+import { Component, OnInit, Input, OnChanges, ElementRef, ViewChild, AfterViewChecked } from '@angular/core'
 import { ChatService } from '../chat.service'
 import { trigger, style, animate, transition } from '@angular/animations';
 
@@ -13,32 +13,61 @@ import { trigger, style, animate, transition } from '@angular/animations';
 	]
 })
 
-export class ConversationComponent implements OnInit, OnChanges {
+export class ConversationComponent implements OnInit, OnChanges, AfterViewChecked {
 	@Input() id: string;
 	@Input() addresse: string;
 	@Input() title: string;
+	@ViewChild('conversationBody') private conversationBody: ElementRef;
 	conversationId: string;
 	message: string;
 	messages = [];
+	messagesToDisplay = [];
 	messageStream;
+	isInitialized: boolean = false;
 	constructor(private chatService: ChatService) { }
 
 	getHistory() {
 		this.chatService.getHistory(this.addresse).subscribe(history => {
-			console.log(history)
 			this.messages = history['messages'].sort((a,b) => {
 				a = new Date(a.date)
     			b = new Date(b.date)
     			return a < b ? -1 : a > b ? 1 : 0
 			})
 			this.conversationId = history['conversationId']
-			this.chatService.sendSeenMessage(this.conversationId, this.addresse)
+			this.groupMessagesToDisplay()
 		})
+		this.chatService.sendSeenMessage(this.conversationId, this.addresse)
 	}
+
+	groupMessagesToDisplay() {
+		this.messagesToDisplay = [];
+		this.messages.forEach(message => {
+			message.date = new Date(message.date)
+			this.addNewMessageToDisplay(message)
+		})
+		console.log(this.messagesToDisplay)
+	}
+
+	addNewMessageToDisplay(message) {
+		if(this.messagesToDisplay.length === 0 || this.messagesToDisplay[this.messagesToDisplay.length - 1][0].author !== message.author) {
+			this.messagesToDisplay.push([message])
+		}
+		else {
+			this.messagesToDisplay[this.messagesToDisplay.length - 1].push(message)
+		}
+	}
+
+    scrollToBottom(): void {
+        try {
+            this.conversationBody.nativeElement.scrollTop = this.conversationBody.nativeElement.scrollHeight;
+        } catch(err) { 
+        }                 
+    }
 
 	ngOnInit() {
 		this.messageStream = this.chatService.messageAnnounced.subscribe(message => {
 			this.messages.push(message)
+			this.addNewMessageToDisplay(message)
 			this.chatService.sendSeenMessage(this.conversationId, this.addresse)
 		})
 		this.getHistory()
@@ -52,10 +81,19 @@ export class ConversationComponent implements OnInit, OnChanges {
 				}
 			})
 		})
+		this.isInitialized = true
 	}
+
  	ngOnChanges() {
- 		this.getHistory()
+ 		if(this.isInitialized){
+	 		this.getHistory()
+ 		}
  	}
+
+ 	ngAfterViewChecked() {
+    	this.scrollToBottom();
+  	}
+
 	getMessageAck(id) {
 		this.messages = this.messages.map(message => {
 			if(!message._id) {
@@ -73,9 +111,11 @@ export class ConversationComponent implements OnInit, OnChanges {
 				content: this.message,
 				wasDelivered: false,
 				author: this.id,
-				wasSeen: false
+				wasSeen: false,
+				date: Date.now()
 			})
 			this.message = ''
+			this.addNewMessageToDisplay(this.messages[this.messages.length - 1])
 		}
 	}
 	ngOnDestroy() {
