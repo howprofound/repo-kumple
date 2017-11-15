@@ -1,5 +1,3 @@
-const jwt = require('jsonwebtoken')
-
 const Users = require('../models/user')
 const Conversations = require('../models/conversation')
 const Messages = require('../models/message')
@@ -7,29 +5,19 @@ const Messages = require('../models/message')
 var connectedUsers = []
 
 exports.load_chat_data = (req, res) => {
-    jwt.verify(req.headers.authorization, 'supersecretsecret', (err, decoded) => {
+    Users.find({_id: { $ne: req.userID }}, 'username _id', (err, users) => {
         if(err) {
             res.send({
                 status: "error"
             })
         }
         else {
-            Users.find({_id: { $ne: decoded.id }}, 'username _id', (err, users) => {
-                if(err) {
-                    res.send({
-                        status: "error"
-                    })
-                }
-                else {
-                    res.send({
-                        status: "success",
-                        users: users
-                    })
-                }
+            res.send({
+                status: "success",
+                users: users
             })
         }
     })
-    
 }
 
 exports.chat_connection = (id, socket) => {

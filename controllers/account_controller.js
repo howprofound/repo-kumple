@@ -82,25 +82,16 @@ exports.user_login = (req, res) => {
 }
 
 exports.get_user = (req, res) => {
-    jwt.verify(req.headers.authorization, 'supersecretsecret', (err, decoded) => {
-        if(err) {
+    Users.findOne({ _id: req.userID }, 'username _id', (error, user) => {
+        if(error) {
             res.send({
                 status: "error"
             })
         }
         else {
-            Users.findOne({ _id: decoded.id }, 'username _id', (error, user) => {
-                if(error) {
-                    res.send({
-                        status: "error"
-                    })
-                }
-                else {
-                    res.send({
-                        status: "success",
-                        username: user.username
-                    })
-                }
+            res.send({
+                status: "success",
+                username: user.username
             })
         }
     })
