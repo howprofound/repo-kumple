@@ -17,6 +17,7 @@ export class ConversationComponent implements OnInit, OnChanges, AfterViewChecke
 	@Input() id: string;
 	@Input() addresse: string;
 	@Input() title: string;
+	@Input() username: string;
 	@ViewChild('conversationBody') private conversationBody: ElementRef;
 	conversationId: string;
 	message: string;
@@ -37,6 +38,18 @@ export class ConversationComponent implements OnInit, OnChanges, AfterViewChecke
 			this.groupMessagesToDisplay()
 		})
 		this.chatService.sendSeenMessage(this.conversationId, this.addresse)
+	}
+
+	getMessageStatus(message) {
+		if(message.wasSeen) {
+			return "Seen"
+		}
+		else if(message.wasDelivered) {
+			return "Delivered"
+		}
+		else {
+			return "Sending..."
+		}
 	}
 
 	groupMessagesToDisplay() {

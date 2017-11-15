@@ -32,6 +32,7 @@ export class LoginComponent implements OnInit {
 					break;
 				case "success":
 					localStorage.setItem('token', data['token'])
+					this.auth.username = value.username
 					this.router.navigate(['/chat'])
 					break;
 				default: 

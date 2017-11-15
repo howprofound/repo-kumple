@@ -1,5 +1,6 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { ChatService } from '../chat.service'
+import { AuthService } from '../auth.service'
 import { trigger, style, animate, transition, keyframes, state } from '@angular/animations';
 
 
@@ -58,7 +59,8 @@ export class ChatComponent implements OnInit {
 	messageStream
 	conversationId: string
 	conversationTitle: string
-	constructor(private chatService: ChatService) { }
+	username: string;
+	constructor(private chatService: ChatService, private authService: AuthService) { }
 	onConnect(activeUsers) {
 		this.users = this.users.map(user => {
 			if(activeUsers.find(activeUser => activeUser.id === user._id)) {
@@ -88,7 +90,20 @@ export class ChatComponent implements OnInit {
 	ngOnInit() {
 		this.isConnected = false
 		this.isConversationStarted = false
-		this.chatService.getData().subscribe(data => {
+		if(!this.authService.username) {
+			this.authService.getUsername().subscribe(data => {
+				console.log(data)
+				if(data['status'] === 'success') {
+					this.authService.username = data['username']
+					this.username = this.authService.username
+				}
+			})
+		}
+		else {
+			this.username = this.authService.username
+		}
+
+		this.chatService.getChatData().subscribe(data => {
 			this.users = data['users'].map(user => {
 				return Object.assign(user, { isActive: false })
 			})

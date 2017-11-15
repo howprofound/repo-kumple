@@ -1,12 +1,23 @@
 <mat-toolbar>@{{title}}</mat-toolbar>
 <mat-sidenav-container class="example-container">
 	<mat-sidenav mode="side" opened="true" disableClose="true" position="end">
+		<img src="https://i.pinimg.com/originals/7c/c7/a6/7cc7a630624d20f7797cb4c8e93c09c1.png"/> <br>
+		<span>
+			John Doe 
+		</span>
+		<hr>
+		<p>
+			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean eu mauris posuere, ultricies magna vitae, dapibus velit. Nullam eget placerat tellus. Vivamus gravida posuere risus, et bibendum neque egestas sed.
+		</p>
 	</mat-sidenav>
 	<div class="conversation-container">
 		<div class="conversation-body" #conversationBody>
 			<div class="message-list" *ngFor="let messagesList of messagesToDisplay"  [class.mine]="messagesList[0].author === id">
-				<span class="message-author">{{title}}</span> 
+				<span class="message-author">{{messagesList[0].author === id ? username : title}}</span> 
 				<span class="message-list-date">{{messagesList[0].date.toLocaleString()}}</span>
+				<span class="message-status" *ngIf="messagesList[0].author === id">
+					{{getMessageStatus(messagesList[messagesList.length-1])}}
+				</span>
 				<div class="message-container" *ngFor="let message of messagesList">
 					{{message.content}}
 				</div>

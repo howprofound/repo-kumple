@@ -104,7 +104,7 @@ export class ChatService {
     return observable
   }  
 
-  getData() {
+  getChatData() {
     console.log(this.token)
     return this.http.get('/api/chat', { 
       headers: new HttpHeaders().set('Authorization', this.token)
