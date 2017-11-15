@@ -85,6 +85,8 @@ export class ConversationComponent implements OnInit, OnChanges, AfterViewChecke
 	}
 
  	ngOnChanges() {
+ 		this.messages = []
+ 		this.messagesToDisplay = []
  		if(this.isInitialized){
 	 		this.getHistory()
  		}
