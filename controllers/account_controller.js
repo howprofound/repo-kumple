@@ -89,7 +89,7 @@ exports.get_user = (req, res) => {
             })
         }
         else {
-            Users.findOne({ _id: decoded.id }, 'username', (error, username) => {
+            Users.findOne({ _id: decoded.id }, 'username _id', (error, user) => {
                 if(error) {
                     res.send({
                         status: "error"
@@ -98,7 +98,7 @@ exports.get_user = (req, res) => {
                 else {
                     res.send({
                         status: "success",
-                        username: username
+                        username: user.username
                     })
                 }
             })
