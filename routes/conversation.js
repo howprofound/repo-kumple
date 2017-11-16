@@ -8,5 +8,7 @@ module.exports = () => {
 
     router.get('/group_history/:id', conversation_controller.group_conversation_history)
 
+    router.post('/group_conversation', conversation_controller.group_conversation_create)
+
 	return router;
 }

@@ -16,7 +16,7 @@ module.exports = (app, db, io) => {
 		jwt.verify(req.headers.authorization, 'supersecretsecret', (err, decoded) => {
 			if(err) {
 				res.send({
-					status: "error"
+					status: "authorization_error"
 				})
 			}
 			else {
@@ -35,7 +35,7 @@ module.exports = (app, db, io) => {
 	app.get('*', (req, res) => {
   		res.sendFile(path.join(__dirname, '../dist/index.html'));
 	})
-	
+
 	io.set('authorization', socketioJwt.authorize({
 		secret: 'supersecretsecret',
 		handshake: true
