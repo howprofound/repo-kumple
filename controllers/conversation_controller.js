@@ -36,8 +36,7 @@ exports.conversation_history = (req, res) => {
 }
 
 exports.group_conversation_history = (req, res) => {
-    Groups.findOne({ users: { $all: req.users }, title: req.title
-    }, (groupErr, group) => {
+    Groups.findOne({ _id: req.params.id }, (groupErr, group) => {
         if (groupErr) {
             res.send({
                 status: "error"
@@ -54,12 +53,8 @@ exports.group_conversation_history = (req, res) => {
             })
         }
         else {
-            GroupMessages.create({ title: "New Group", users: req.users
-            }, (newGroupErr, newGroup) => {
-                res.send({
-                    status: "success",
-                    messages: []
-                })
+            res.send({
+                status: "no_such_conversation"
             })
         }
     })
