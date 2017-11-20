@@ -15,7 +15,8 @@ import {
         MatProgressSpinnerModule, 
         MatSnackBarModule,
         MatSidenavModule,
-        MatToolbarModule
+        MatToolbarModule,
+        MatChipsModule
       } from '@angular/material';
 
 import { AppComponent } from './app.component';
@@ -68,7 +69,8 @@ const ROUTES = [
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatSidenavModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatChipsModule
   ],
   providers: [
     ChatService,

@@ -52,22 +52,23 @@ class User {
 
 export class ChatComponent implements OnInit {
 	id: string
-	users = []
+	users: Array<any> = []
 	isConnected: boolean
 	isConversationStarted: boolean
 	userStream
 	messageStream
 	conversationId: string
 	conversationTitle: string
-	username: string;
+	username: string
+	groups: Array<any> = []
 	constructor(private chatService: ChatService, private authService: AuthService) { }
 	onConnect(activeUsers) {
 		this.users = this.users.map(user => {
 			if(activeUsers.find(activeUser => activeUser.id === user._id)) {
-				return Object.assign(user, { isActive: true })
+				return Object.assign(user, { isActive: true, unreadMessages: 0 })
 			}
 			else {
-				return user
+				return Object.assign(user, { unreadMessages: 0 })
 			}
 		})
 		this.userStream = this.chatService.monitorUsers().subscribe(data => {
@@ -78,6 +79,9 @@ export class ChatComponent implements OnInit {
 		this.chatService.getMessages().subscribe(message => {
 			if(this.conversationId === message['author'])
 				this.chatService.announceMessage(message)
+			else {
+				this.users.find(user => user._id === message['author']).unreadMessages++	
+			}
 		})
 		this.isConnected = true
 	}
@@ -85,6 +89,7 @@ export class ChatComponent implements OnInit {
 	startPrivateConversation(conversation) {
 		this.conversationId = conversation._id,
 		this.conversationTitle = conversation.username
+		conversation.unreadMessages = 0
 		this.isConversationStarted = true
 	}
 	ngOnInit() {
@@ -107,6 +112,7 @@ export class ChatComponent implements OnInit {
 			this.users = data['users'].map(user => {
 				return Object.assign(user, { isActive: false })
 			})
+			this.groups = data['groups']
 			this.id = this.chatService.connect()
 			this.chatService.getActiveUsers().subscribe(activeUsers => this.onConnect(activeUsers))
 		})
