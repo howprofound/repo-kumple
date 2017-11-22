@@ -2,16 +2,17 @@
 <mat-card>
 	<a routerLink="">Login</a>
 	<h1>Sign up!</h1>
-	<form #f="ngForm" (ngSubmit)="onSubmit(f)">
+	<form [formGroup]="form" (ngSubmit)="onSubmit()">
 		<mat-form-field>
-	  		<input matInput placeholder="Username" name="username" autofocus required ngModel>
+	  		<input matInput placeholder="Username" autofocus formControlName="username">
 		</mat-form-field>
 		<mat-form-field>
-	  		<input matInput placeholder="Password" type="password" name="password" required ngModel>
+	  		<input matInput placeholder="Password" type="password" name="password" formControlName="password">
 		</mat-form-field>
 		<mat-form-field>
-	  		<input matInput placeholder="E-mail" type="email" name="email" required ngModel>
+	  		<input matInput placeholder="E-mail" type="email" name="email" formControlName="email">
 		</mat-form-field>
+		<input type="file" name="avatar" (change)="onFileChange($event)" accept="image/*">
 		<button mat-raised-button color="primary" type="submit">Register</button>
 	</form>
 </mat-card>
