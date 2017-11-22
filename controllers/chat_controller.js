@@ -25,11 +25,12 @@ exports.load_chat_data = (req, res) => {
     })
 }
 
-exports.chat_connection = (id, socket) => {
+exports.chat_connection = (userData, socket) => {
     socket.emit('connected_users', connectedUsers)
     connectedUsers.push({
-        id: id,
-        socketId: socket.id
+        id: userData.id,
+        socketId: socket.id,
+        groups: userData.groups
     })
     socket.broadcast.emit('user_change', {id: id, isActive: true})
 }
@@ -103,26 +104,39 @@ exports.new_group_message = (message, ack, socket) => {
             console.log("error")
         }
         else {
-            let target = connectedUsers.find(user => user.id === message.addresse) // to do
-            if (target) {
-                socket.broadcast.to(target.socketId).emit("new_group_message", messageInstance)
+            for (i in connectedUsers) {
+                if(connectedUsers[i].groups.includes(message.groupId) && connectedUsers[i].id !== message.author){
+                    socket.broadcast.to(connectedUsers.socketId).emit("new_group_message", messageInstance)
+                    ack(messageInstance._id)
+                }
             }
-            ack(messageInstance._id)
         }
     })
 }
 
 exports.group_message_seen = (data, socket) => {
-    GroupMessages.update({ groupId: data.groupId, author: data.author, wasSeenBy: { $ne: data.whoRead } }, // to do
-        { $addToSet: { wasSeenBy: data.whoRead } }, { multi: true }, (err, messages) => {
+    GroupMessages.update({ groupId: data.groupId },
+        { $addToSet: { wasSeenBy: data.userId } }, { multi: true }, (err, messages) => {
         if(err) {
             console.log("error")
         }
         else {
-            let target = connectedUsers.find(user => user.id === data.author)
-            if (target) {
-                socket.broadcast.to(target.socketId).emit("group_message_seen", data.groupId)
+            for (i in connectedUsers) {
+                if(connectedUsers[i].groups.includes(data.groupId) && connectedUsers[i].id !== data.userId){
+                    socket.broadcast.to(connectedUsers.socketId).emit("group_message_seen", {
+                        groupId: data.groupId,
+                        userId: data.userId
+                    })
+                }
             }
         }
     })
+}
+
+exports.add_user_to_group = (data, socket) => { //todo
+
+}
+
+exports.delete_user_from_group = (data, socket) => { //todo
+
 }

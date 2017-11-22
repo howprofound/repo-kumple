@@ -20,12 +20,12 @@ export class ChatService {
   }
 
   sendMessage(message, addresse, conversationId, ack) {
-    this.socket.emit('new_message', { 
-      content: message, 
-      author: this.jwtHelper.decodeToken(this.token).id, 
+    this.socket.emit('new_message', {
+      content: message,
+      author: this.jwtHelper.decodeToken(this.token).id,
       addresse: addresse,
       conversationId: conversationId
-    }, ack)    
+    }, ack)
   }
 
   sendSeenMessage(conversationId, author) {
@@ -47,7 +47,7 @@ export class ChatService {
 
   getHistory(id) {
     console.log(`/api/conversation/history/${id}`)
-    return this.http.get<any[]>(`/api/conversation/history/${id}`, { 
+    return this.http.get<any[]>(`/api/conversation/history/${id}`, {
       headers: new HttpHeaders().set('Authorization', this.token)
     })
   }
@@ -81,13 +81,16 @@ export class ChatService {
     return observable
   }
 
-  connect() {
+  connect(groups) {
   	this.socket = io.connect('', {
       query: 'token=' + this.token
     })
     let id = this.jwtHelper.decodeToken(this.token).id
     this.socket.on('connect', () => {
-      this.socket.emit('join', id)
+      this.socket.emit('join', {
+        id: id,
+        groups: groups
+      })
     })
     return id
   }
@@ -101,13 +104,13 @@ export class ChatService {
       return () => {
         this.socket.disconnect()
       }
-    })     
+    })
     return observable
-  }  
+  }
 
   getChatData() {
     console.log(this.token)
-    return this.http.get('/api/chat', { 
+    return this.http.get('/api/chat', {
       headers: new HttpHeaders().set('Authorization', this.token)
     })
   }

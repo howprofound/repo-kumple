@@ -42,7 +42,7 @@ module.exports = (app, db, io) => {
 	}))
 
 	io.on('connection', socket => {
-		socket.on("join", id => chat_controller.chat_connection(id, socket))
+		socket.on("join", userData => chat_controller.chat_connection(id, socket))
 		socket.on("disconnect", () => chat_controller.chat_disconnection(socket))
 		socket.on("new_message", (message, ack) => chat_controller.new_message(message, ack, socket))
 		socket.on("message_seen", message => chat_controller.message_seen(message, socket))

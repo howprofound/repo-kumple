@@ -80,7 +80,7 @@ export class ChatComponent implements OnInit {
 			if(this.conversationId === message['author'])
 				this.chatService.announceMessage(message)
 			else {
-				this.users.find(user => user._id === message['author']).unreadMessages++	
+				this.users.find(user => user._id === message['author']).unreadMessages++
 			}
 		})
 		this.isConnected = true
@@ -113,7 +113,7 @@ export class ChatComponent implements OnInit {
 				return Object.assign(user, { isActive: false })
 			})
 			this.groups = data['groups']
-			this.id = this.chatService.connect()
+			this.id = this.chatService.connect(this.groups)
 			this.chatService.getActiveUsers().subscribe(activeUsers => this.onConnect(activeUsers))
 		})
 	}
