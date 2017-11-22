@@ -2,14 +2,21 @@
 <mat-toolbar color="primary" [@slideTop]>Awesome Chat</mat-toolbar>
 <mat-sidenav-container>
 	<mat-sidenav mode="side" opened="true" disableClose="true" id="left-sidenav" [@slideLeft]>
-		<h4>People</h4>
-		<mat-list>
-			<mat-list-item *ngFor="let user of users" (click)="startPrivateConversation(user)">
-				<img matListAvatar src="https://forums.rowery.org/images/user4.png" alt="...">
-			 	<span class="user-wrapper" matLine>{{user.username}}</span> 
+		<h5>GROUPS</h5>
+		<div id="nav-group-section">
+			<div class="nav-row" *ngFor="let group of groups">
+				<img class="group-avatar" src="team.png"/>
+				<span class="nav-text-wrapper">{{group.title}}</span>
+			</div>
+		</div>
+		<h5>PEOPLE</h5>
+		<div id="nav-people-section">
+			<div class="nav-row" *ngFor="let user of users" (click)="startPrivateConversation(user)">
 			 	<span class="active-status" [class.active]="user.isActive"></span>
-			</mat-list-item>
-		</mat-list>
+			 	<span class="nav-text-wrapper" matLine>{{user.username}}</span>
+			 	<span class="unread-messages-chip" *ngIf="user.unreadMessages > 0">{{user.unreadMessages}}</span> 
+			</div>
+		</div>
 	</mat-sidenav>
 	<div class="main-content">
 		<mat-spinner *ngIf="!isConnected; else welcomeBlock"[diameter]="150"></mat-spinner>

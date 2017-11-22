@@ -8,17 +8,20 @@ var connectedUsers = []
 
 exports.load_chat_data = (req, res) => {
     Users.find({_id: { $ne: req.userID }}, 'username _id', (err, users) => {
-        if(err) {
-            res.send({
-                status: "error"
-            })
-        }
-        else {
-            res.send({
-                status: "success",
-                users: users
-            })
-        }
+        Groups.find({users: req.userID}, (err, groups) => {
+            if(err) {
+                res.send({
+                    status: "error"
+                })
+            }
+            else {
+                res.send({
+                    status: "success",
+                    users: users,
+                    groups: groups
+                })
+            }
+        })
     })
 }
 

@@ -36,8 +36,8 @@ export class ConversationComponent implements OnInit, OnChanges, AfterViewChecke
 			})
 			this.conversationId = history['conversationId']
 			this.groupMessagesToDisplay()
+			this.chatService.sendSeenMessage(this.conversationId, this.addresse)
 		})
-		this.chatService.sendSeenMessage(this.conversationId, this.addresse)
 	}
 
 	getMessageStatus(message) {
