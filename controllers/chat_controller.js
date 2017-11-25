@@ -32,7 +32,7 @@ exports.chat_connection = (userData, socket) => {
         socketId: socket.id,
         groups: userData.groups
     })
-    socket.broadcast.emit('user_change', {id: id, isActive: true})
+    socket.broadcast.emit('user_change', {id: userData.id, isActive: true})
 }
 
 exports.chat_disconnection = socket => {
