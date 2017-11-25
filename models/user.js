@@ -21,7 +21,10 @@ var UserSchema = new mongoose.Schema({
 	avatar: {
 		type: String,
 		default: "basic-avatar.jpg"
-	}
+	},
+	firstName: String,
+	lastName: String,
+	bio: String
 });
 
 UserSchema.methods.validPassword = function(password) {

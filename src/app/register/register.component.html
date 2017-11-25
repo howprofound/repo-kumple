@@ -4,13 +4,23 @@
 	<h1>Sign up!</h1>
 	<form [formGroup]="form" (ngSubmit)="onSubmit()">
 		<mat-form-field>
-	  		<input matInput placeholder="Username" autofocus formControlName="username">
+	  		<input matInput placeholder="Username" name="username" formControlName="username" autofocus>
 		</mat-form-field>
 		<mat-form-field>
 	  		<input matInput placeholder="Password" type="password" name="password" formControlName="password">
 		</mat-form-field>
 		<mat-form-field>
+	  		<input matInput placeholder="First name" name="first_name" formControlName="firstName">
+		</mat-form-field>
+		<mat-form-field>
+	  		<input matInput placeholder="Last name" name="last_name" formControlName="lastName">
+		</mat-form-field>
+		<mat-form-field>
 	  		<input matInput placeholder="E-mail" type="email" name="email" formControlName="email">
+		</mat-form-field>
+		<mat-form-field>
+	  		<textarea matInput placeholder="Short bio" name="bio" formControlName="bio" rows="3">
+	  		</textarea>
 		</mat-form-field>
 		<input type="file" name="avatar" (change)="onFileChange($event)" accept="image/*">
 		<button mat-raised-button color="primary" type="submit">Register</button>
