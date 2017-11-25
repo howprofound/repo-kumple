@@ -4,10 +4,6 @@ const socketioJwt = require('socketio-jwt')
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 
-const Messages = require('../models/message')
-const Users = require('../models/user')
-const Conversations = require('../models/conversation')
-
 const chat_controller = require('../controllers/chat_controller')
 
 module.exports = (app, db, io) => {
@@ -31,6 +27,8 @@ module.exports = (app, db, io) => {
 	app.use('/api/chat', require('./chat')())
 
 	app.use('/api/conversation', require('./conversation')())
+
+	app.use('/api/calendar', require('./event')())
 
 	app.get('*', (req, res) => {
   		res.sendFile(path.join(__dirname, '../dist/index.html'));

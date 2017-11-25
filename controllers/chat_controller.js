@@ -133,10 +133,40 @@ exports.group_message_seen = (data, socket) => {
     })
 }
 
-exports.add_user_to_group = (data, socket) => { //todo
-
+exports.add_user_to_group = (data, socket) => {
+    Groups.findOneAndUpdate({ groupId: data.groupId },
+        { $addToSet: { users: data.userId } }, (err, group) => {
+        if(err) {
+            console.log("error")
+        }
+        else {
+            for (i in connectedUsers) {
+                if(connectedUsers[i].groups.includes(data.groupId) && connectedUsers[i].id !== data.userId) {
+                    socket.broadcast.to(connectedUsers.socketId).emit("add_user_to_group", {
+                        groupId: data.groupId,
+                        userId: data.userId
+                    })
+                }
+            }
+        }
+    })
 }
 
-exports.delete_user_from_group = (data, socket) => { //todo
-
+exports.delete_user_from_group = (data, socket) => {
+    Groups.findOneAndUpdate({ groupId: data.groupId },
+        { $pull: { users: data.userId } }, (err, group) => {
+        if(err) {
+            console.log("error")
+        }
+        else {
+            for (i in connectedUsers) {
+                if(connectedUsers[i].groups.includes(data.groupId) && connectedUsers[i].id !== data.userId) {
+                    socket.broadcast.to(connectedUsers.socketId).emit("delete_user_from_group", {
+                        groupId: data.groupId,
+                        userId: data.userId
+                    })
+                }
+            }
+        }
+    })
 }
