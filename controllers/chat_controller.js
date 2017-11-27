@@ -170,3 +170,39 @@ exports.delete_user_from_group = (data, socket) => {
         }
     })
 }
+
+exports.group_conversation_create = (data, socket) => {
+    Groups.create({ title: data.title, users: data.users }, (groupErr, group) => {
+        if (groupErr) {
+            console.log("error")
+        }
+        else {
+            for (i in data.users) {
+                if(data.users[i] !== data.userId) {
+                    socket.broadcast.to(connectedUsers.socketId).emit("group_conversation_create", {
+                        groupId: data.groupId,
+                        title: data.title,
+                        users: data.users
+                    })
+                }
+            }
+        }
+    })
+}
+
+exports.group_conversation_create = (data, socket) => {
+    Groups.remove({ _id: data.groupId }, (groupErr, group) => {
+        if (groupErr) {
+            console.log("error")
+        }
+        else {
+            for (i in data.users) {
+                if(data.users[i] !== data.userId) {
+                    socket.broadcast.to(connectedUsers.socketId).emit("group_conversation_delete", {
+                        groupId: data.groupId,
+                    })
+                }
+            }
+        }
+    })
+}

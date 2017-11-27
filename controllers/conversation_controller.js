@@ -59,19 +59,3 @@ exports.group_conversation_history = (req, res) => {
         }
     })
 }
-
-exports.group_conversation_create = (req, res) => {
-      Groups.create(req.body, (groupErr, group) => {
-          if (groupErr) {
-              res.send({
-                  status: "error"
-              })
-          }
-          else {
-              res.send({
-                  status: "success",
-                  groupId: group._id
-              })
-          }
-      })
-}
