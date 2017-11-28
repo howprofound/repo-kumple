@@ -7,7 +7,7 @@ const GroupMessages = require('../models/group_message')
 var connectedUsers = []
 
 exports.load_chat_data = (req, res) => {
-    Users.find({_id: { $ne: req.userID }}, 'username _id', (err, users) => {
+    Users.find({_id: { $ne: req.userID }}, 'username _id avatar firstName lastName email bio', (err, users) => {
         Groups.find({users: req.userID}, (err, groups) => {
             if(err) {
                 res.send({

@@ -51,7 +51,12 @@ export class RegisterComponent implements OnInit {
 		formData.append('password', this.form.get('password').value)
 		formData.append('email', this.form.get('email').value)
 		formData.append('username', this.form.get('username').value)
-		formData.append('avatar', this.form.get('avatar').value)
+		formData.append('firstName', this.form.get('firstName').value)
+		formData.append('lastName', this.form.get('lastName').value)
+		formData.append('bio', this.form.get('bio').value)
+		if(this.form.get('avatar').value !== null) {
+			formData.append('avatar', this.form.get('avatar').value)
+		}
 		return formData
   	}
 	onSubmit() {

@@ -53,6 +53,7 @@ export class ChatComponent implements OnInit {
 	username: string
 	groups: Array<any> = []
 	activeView: string = 'loading'
+	currentChatPartner;
 	constructor(private chatService: ChatService, private authService: AuthService, public dialog: MatDialog) { }
 	onConnect(activeUsers) {
 		this.users = this.users.map(user => {
@@ -64,6 +65,7 @@ export class ChatComponent implements OnInit {
 			}
 		})
 		this.userStream = this.chatService.monitorUsers().subscribe(data => {
+			console.log(data, this.id)
 			this.users
 				.find(user => user._id === data['id'])
 				.isActive = data['isActive']
@@ -85,6 +87,7 @@ export class ChatComponent implements OnInit {
 		this.conversationId = conversation._id,
 		this.conversationTitle = conversation.username
 		conversation.unreadMessages = 0
+		this.currentChatPartner = conversation
 		this.activeView = 'conversation'
 	}
 
@@ -99,12 +102,14 @@ export class ChatComponent implements OnInit {
 			height: 'auto'
 		})
 		dialogRef.afterClosed().subscribe(data => {
-			let dataToSend = {
-				title: data.title,
-				users: data.users.map(user => user._id)
+			if(data) {
+				let dataToSend = {
+					title: data.title,
+					users: data.users.map(user => user._id)
+				}
+				dataToSend.users.push(this.id)
+				this.chatService.sendNewGroupMessage(dataToSend, this.getNewGroupAck.bind(this))
 			}
-			dataToSend.users.push(this.id)
-			this.chatService.sendNewGroupMessage(dataToSend, this.getNewGroupAck.bind(this))
 		})
 	}
 

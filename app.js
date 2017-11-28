@@ -11,6 +11,7 @@ const express 		= require('express'),
 app.use(bodyParser.urlencoded({ extended: false, limit: '5mb'}))
 	.use(bodyParser.json())
 	.use(express.static(path.join(__dirname, 'dist')))
+	.use('/images', express.static(path.join(__dirname, 'public')))
 
 mongoose.connect(db.url, { useMongoClient: true }, database => {
 	require('./routes')(app, database, io)

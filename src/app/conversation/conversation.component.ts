@@ -18,6 +18,7 @@ export class ConversationComponent implements OnInit, OnChanges, AfterViewChecke
 	@Input() addresse: string;
 	@Input() title: string;
 	@Input() username: string;
+	@Input() user;
 	@ViewChild('conversationBody') private conversationBody: ElementRef;
 	conversationId: string;
 	message: string;
@@ -80,7 +81,6 @@ export class ConversationComponent implements OnInit, OnChanges, AfterViewChecke
 		this.messageStream = this.chatService.messageAnnounced.subscribe(message => {
 			this.messages.push(message)
 			this.addNewMessageToDisplay(message)
-			this.chatService.sendSeenMessage(this.conversationId, this.addresse)
 		})
 		this.getHistory()
 		this.chatService.getMessageSeen().subscribe(id => {

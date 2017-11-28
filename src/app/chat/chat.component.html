@@ -26,6 +26,6 @@
 		<div *ngSwitchCase="'welcome'" class="welcome-block"  [@show]>
 			Welcome to our <u>awesome chat</u>!
 		</div>
-		<conversation *ngSwitchCase="'conversation'"[id]="id" [addresse]="conversationId" [title]="conversationTitle" [username]="username"></conversation>
+		<conversation *ngSwitchCase="'conversation'" [id]="id" [addresse]="conversationId" [title]="conversationTitle" [username]="username" [user]="currentChatPartner"></conversation>
 	</div>
 </mat-sidenav-container>

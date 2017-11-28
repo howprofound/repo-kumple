@@ -5,9 +5,9 @@
   		<input matInput placeholder="Group name" name="title" autofocus required [(ngModel)]="data.title">
 	</mat-form-field>
 	<mat-selection-list>
-	  <mat-list-option *ngFor="let user of data.users" (click)="onUserSelect(user)" color="primary">
-	    {{user.username}}
-	  </mat-list-option>
+		<mat-list-option *ngFor="let user of data.users" (click)="onUserSelect(user)">
+			{{user.firstName}} {{user.lastName}} <span class="list-username">(@{{user.username}})</span>
+		</mat-list-option>
 	</mat-selection-list>
 </mat-dialog-content>
 <mat-dialog-actions>

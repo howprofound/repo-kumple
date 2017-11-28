@@ -6,11 +6,32 @@ const jimp = require('jimp')
 const fs = require('fs')
 
 const sendStatusAndUnlink = (req, res, status = "error") => {
-    fs.unlink(req.file.destination + req.file.filename)
+    if(req.file)
+        fs.unlink(req.file.destination + req.file.filename)
     res.send({
         status: status
     })
 }
+
+const processAvatar = (file) => {
+    jimp.read(file.destination + file.filename)
+}
+
+const createUser = (req, res) => {
+    console.log(req.body)
+    req.body.password = crypto.createHash('sha1').update(req.body.password).digest('hex')
+    Users.create(req.body, (errCreate, user) => {
+        if(errCreate) {
+            if(req.body.avatar)
+                fs.unlink('public/' + req.body.avatar)
+            sendStatusAndUnlink(req, res, "error")
+        }
+        else {
+            sendStatusAndUnlink(req, res, "success")
+        }
+    })
+}
+
 
 exports.user_register = (req, res) => {
     Users.findOne({ username: req.body.username }, (errUsername, user) => {
@@ -29,32 +50,21 @@ exports.user_register = (req, res) => {
                     sendStatusAndUnlink(req, res, "mail_found")
                 }
                 else {
-                    jimp.read(req.file.destination + req.file.filename, (errAvatar, avatar) => {
-                        if(errAvatar) {
-                                    sendStatusAndUnlink(req, res, "error")
-                        }
-                        else {
+                    if(req.file) {
+                        console.log("TEST")
+                        processAvatar(req.file).then(avatar => {
                             let filename = Date.now() + ".jpg"
-                            avatar.resize(256, 256).write('public/' + filename, (err) => { // create resized image <-- this line is the importantest!
-                                req.body.avatar = filename
-                                if(err) {
-                                    sendStatusAndUnlink(req, res, "error")
-                                }
-                                else {
-                                    req.body.password = crypto.createHash('sha1').update(req.body.password).digest('hex')
-                                    Users.create(req.body, (errCreate, user) => {
-                                        if(errCreate) {
-                                            fs.unlink('public/' + filename)
-                                            sendStatusAndUnlink(req, res, "error")
-                                        }
-                                        else {
-                                            sendStatusAndUnlink(req, res, "success")
-                                        }
-                                    })
-                                }
-                            }) 
-                        }
-                    })
+                            avatar.resize(256, 256).write('public/' + filename)
+                            req.body.avatar = filename
+                            createUser(req, res)    
+                        }).catch(err => {
+                            sendStatusAndUnlink(req, res, "error")
+                        })
+                    }
+                    else {
+                        console.log("TEST@12")
+                        createUser(req, res)
+                    }
                 }
             })
         }

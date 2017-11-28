@@ -42,7 +42,6 @@ export class ChatService {
   }
 
   sendSeenMessage(conversationId, author) {
-    console.log(conversationId, author)
     this.socket.emit('message_seen', { conversationId: conversationId, author: author })
   }
 

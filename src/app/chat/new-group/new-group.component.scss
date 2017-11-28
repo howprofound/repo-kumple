@@ -12,8 +12,15 @@
 .mat-selection-list, .mat-form-field {
 	flex: 0 0 100%;
 }
+.mat-selection-list {
+	min-height: 200px;
+}
 
 .mat-dialog-actions {
 	display: flex;
 	justify-content: flex-end;
+}
+
+.list-username {
+	color: lightgrey;
 }

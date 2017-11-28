@@ -6,8 +6,10 @@ import { MAT_DIALOG_DATA } from '@angular/material'
   styleUrls: ['./new-group.component.scss']
 })
 export class NewGroupComponent {
-	constructor(@Inject(MAT_DIALOG_DATA) public data: any) { }
+	constructor(@Inject(MAT_DIALOG_DATA) public data: any) { 
+	}
 	onUserSelect(user) {
+		console.log(user)
 		if(user.isSelected) {
 			user.isSelected = false
 		}
