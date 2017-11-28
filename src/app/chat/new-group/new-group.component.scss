@@ -1,0 +1,19 @@
+.mat-dialog-title {
+	border-bottom: 2px solid grey;
+}
+
+.mat-dialog-content {
+	display: flex;
+	justify-content: center;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.mat-selection-list, .mat-form-field {
+	flex: 0 0 100%;
+}
+
+.mat-dialog-actions {
+	display: flex;
+	justify-content: flex-end;
+}

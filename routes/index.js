@@ -48,7 +48,7 @@ module.exports = (app, db, io) => {
 		socket.on("group_message_seen", data => chat_controller.group_message_seen(data, socket))
 		socket.on("add_user_to_group", data => chat_controller.add_user_to_group(data, socket))
 		socket.on("delete_user_from_group", data => chat_controller.delete_user_from_group(data, socket))
-		socket.on("group_conversation_create", data => chat_controller.group_conversation_create(data, socket))
+		socket.on("group_conversation_create", (data, ack) => chat_controller.group_conversation_create(data, socket, ack))
 		socket.on("group_conversation_delete", data => chat_controller.group_conversation_delete(data, socket))
 	})
 }

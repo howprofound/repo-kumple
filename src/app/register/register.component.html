@@ -2,7 +2,7 @@
 <mat-card>
 	<a routerLink="">Login</a>
 	<h1>Sign up!</h1>
-	<form #f="ngForm" (ngSubmit)="onSubmit(f)">
+	<form (ngSubmit)="onSubmit(f)">
 		<mat-form-field>
 	  		<input matInput placeholder="Username" name="username" autofocus required ngModel>
 		</mat-form-field>

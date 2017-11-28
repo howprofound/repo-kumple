@@ -1,19 +1,10 @@
-import { Component, OnInit, HostBinding } from '@angular/core';
+import { Component, OnInit, HostBinding, Inject } from '@angular/core'
 import { ChatService } from '../chat.service'
 import { AuthService } from '../auth.service'
-import { trigger, style, animate, transition, keyframes, state } from '@angular/animations';
+import { trigger, style, animate, transition, keyframes, state } from '@angular/animations'
+import { MatDialog } from '@angular/material'
+import { NewGroupComponent } from "./new-group/new-group.component"
 
-
-class User {
-  username: string;
-  id: string;
-  isActive: boolean;
-  constructor(username, id, isActive) {
-  	this.username = username
-  	this.id = id
-  	this.isActive = isActive
-  }
-}
 
 @Component({
 	selector: 'app-chat',
@@ -50,10 +41,10 @@ class User {
 	}
 })
 
+
 export class ChatComponent implements OnInit {
 	id: string
 	users: Array<any> = []
-	isConnected: boolean
 	isConversationStarted: boolean
 	userStream
 	messageStream
@@ -61,7 +52,8 @@ export class ChatComponent implements OnInit {
 	conversationTitle: string
 	username: string
 	groups: Array<any> = []
-	constructor(private chatService: ChatService, private authService: AuthService) { }
+	activeView: string = 'loading'
+	constructor(private chatService: ChatService, private authService: AuthService, public dialog: MatDialog) { }
 	onConnect(activeUsers) {
 		this.users = this.users.map(user => {
 			if(activeUsers.find(activeUser => activeUser.id === user._id)) {
@@ -83,21 +75,46 @@ export class ChatComponent implements OnInit {
 				this.users.find(user => user._id === message['author']).unreadMessages++
 			}
 		})
-		this.isConnected = true
+		this.chatService.getNewGroupMessages().subscribe(group => {
+			console.log(group)
+			this.groups.push(group)
+		})
+		this.activeView = 'welcome'
 	}
-
 	startPrivateConversation(conversation) {
 		this.conversationId = conversation._id,
 		this.conversationTitle = conversation.username
 		conversation.unreadMessages = 0
-		this.isConversationStarted = true
+		this.activeView = 'conversation'
+	}
+
+	onNewGroupClick() {
+		/*this.activeView = 'new-group'*/
+		let dialogRef = this.dialog.open(NewGroupComponent, {
+			data: {
+				users: this.users,
+				title: ""
+			},
+			width: '600px',
+			height: 'auto'
+		})
+		dialogRef.afterClosed().subscribe(data => {
+			let dataToSend = {
+				title: data.title,
+				users: data.users.map(user => user._id)
+			}
+			dataToSend.users.push(this.id)
+			this.chatService.sendNewGroupMessage(dataToSend, this.getNewGroupAck.bind(this))
+		})
+	}
+
+	getNewGroupAck(group) {
+		this.groups.push(group)
 	}
 	ngOnInit() {
-		this.isConnected = false
-		this.isConversationStarted = false
+		this.activeView = 'loading'
 		if(!this.authService.username) {
 			this.authService.getUsername().subscribe(data => {
-				console.log(data)
 				if(data['status'] === 'success') {
 					this.authService.username = data['username']
 					this.username = this.authService.username

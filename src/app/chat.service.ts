@@ -28,6 +28,19 @@ export class ChatService {
     }, ack)
   }
 
+  sendNewGroupMessage(data, ack) {
+    this.socket.emit('group_conversation_create', data, ack)
+  }
+
+  getNewGroupMessages() {
+    let observable = new Observable(observer => {
+      this.socket.on('group_conversation_create', group => {
+        observer.next(group)
+      })
+    })
+    return observable
+  }
+
   sendSeenMessage(conversationId, author) {
     console.log(conversationId, author)
     this.socket.emit('message_seen', { conversationId: conversationId, author: author })

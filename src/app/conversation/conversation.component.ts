@@ -53,12 +53,11 @@ export class ConversationComponent implements OnInit, OnChanges, AfterViewChecke
 	}
 
 	groupMessagesToDisplay() {
-		this.messagesToDisplay = [];
+		this.messagesToDisplay = []
 		this.messages.forEach(message => {
 			message.date = new Date(message.date)
 			this.addNewMessageToDisplay(message)
 		})
-		console.log(this.messagesToDisplay)
 	}
 
 	addNewMessageToDisplay(message) {

@@ -1,12 +1,15 @@
-
 <mat-toolbar color="primary" [@slideTop]>Awesome Chat</mat-toolbar>
 <mat-sidenav-container>
 	<mat-sidenav mode="side" opened="true" disableClose="true" id="left-sidenav" [@slideLeft]>
 		<h5>GROUPS</h5>
 		<div id="nav-group-section">
 			<div class="nav-row" *ngFor="let group of groups">
-				<img class="group-avatar" src="team.png"/>
+				<mat-icon>forum</mat-icon>
 				<span class="nav-text-wrapper">{{group.title}}</span>
+			</div>
+			<div class="nav-row" id="new-group-row" (click)="onNewGroupClick()">
+				<mat-icon>add</mat-icon>
+				<span class="nav-text-wrapper">Create a group</span>
 			</div>
 		</div>
 		<h5>PEOPLE</h5>
@@ -18,15 +21,11 @@
 			</div>
 		</div>
 	</mat-sidenav>
-	<div class="main-content">
-		<mat-spinner *ngIf="!isConnected; else welcomeBlock"[diameter]="150"></mat-spinner>
-		<ng-template #welcomeBlock>
-			<div class="welcome-block" [@show] *ngIf="!isConversationStarted; else convBlock">
-				Welcome to our <u>awesome chat</u>!
-			</div>
-			<ng-template #convBlock>
-				<conversation [id]="id" [addresse]="conversationId" [title]="conversationTitle" [username]="username"></conversation>
-			</ng-template>
-		</ng-template>
+	<div class="main-content" [ngSwitch]="activeView">
+		<mat-spinner *ngSwitchCase="'loading'" [diameter]="150"></mat-spinner>
+		<div *ngSwitchCase="'welcome'" class="welcome-block"  [@show]>
+			Welcome to our <u>awesome chat</u>!
+		</div>
+		<conversation *ngSwitchCase="'conversation'"[id]="id" [addresse]="conversationId" [title]="conversationTitle" [username]="username"></conversation>
 	</div>
 </mat-sidenav-container>

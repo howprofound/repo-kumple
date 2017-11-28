@@ -16,7 +16,8 @@ import {
         MatSnackBarModule,
         MatSidenavModule,
         MatToolbarModule,
-        MatChipsModule
+        MatChipsModule,
+        MatDialogModule
       } from '@angular/material';
 
 import { AppComponent } from './app.component';
@@ -27,6 +28,7 @@ import { ChatComponent } from './chat/chat.component';
 import { AuthGuardService } from './auth-guard.service';
 import { ConversationComponent } from './conversation/conversation.component';
 import { RegisterComponent } from './register/register.component';
+import { NewGroupComponent } from './chat/new-group/new-group.component';
 
 const ROUTES = [
   {
@@ -52,7 +54,11 @@ const ROUTES = [
     LoginComponent,
     ChatComponent,
     ConversationComponent,
-    RegisterComponent
+    RegisterComponent,
+    NewGroupComponent
+  ],
+  entryComponents: [
+    NewGroupComponent
   ],
   imports: [
     BrowserModule,
@@ -70,7 +76,8 @@ const ROUTES = [
     MatSnackBarModule,
     MatSidenavModule,
     MatToolbarModule,
-    MatChipsModule
+    MatChipsModule,
+    MatDialogModule
   ],
   providers: [
     ChatService,

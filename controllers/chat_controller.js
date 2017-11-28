@@ -141,8 +141,8 @@ exports.add_user_to_group = (data, socket) => {
         }
         else {
             for (i in connectedUsers) {
-                if(connectedUsers[i].groups.includes(data.groupId) && connectedUsers[i].id !== data.userId) {
-                    socket.broadcast.to(connectedUsers.socketId).emit("add_user_to_group", {
+                if(connectedUsers[i].groups.includes(data.groupId)) {
+                    socket.broadcast.to(connectedUsers[i].socketId).emit("add_user_to_group", {
                         groupId: data.groupId,
                         userId: data.userId
                     })
@@ -160,8 +160,8 @@ exports.delete_user_from_group = (data, socket) => {
         }
         else {
             for (i in connectedUsers) {
-                if(connectedUsers[i].groups.includes(data.groupId) && connectedUsers[i].id !== data.userId) {
-                    socket.broadcast.to(connectedUsers.socketId).emit("delete_user_from_group", {
+                if(connectedUsers[i].groups.includes(data.groupId)) {
+                    socket.broadcast.to(connectedUsers[i].socketId).emit("delete_user_from_group", {
                         groupId: data.groupId,
                         userId: data.userId
                     })
@@ -171,18 +171,19 @@ exports.delete_user_from_group = (data, socket) => {
     })
 }
 
-exports.group_conversation_create = (data, socket) => {
+exports.group_conversation_create = (data, socket, ack) => {
     Groups.create({ title: data.title, users: data.users }, (groupErr, group) => {
         if (groupErr) {
             console.log("error")
         }
         else {
-            for (i in data.users) {
-                if(data.users[i] !== data.userId) {
-                    socket.broadcast.to(connectedUsers.socketId).emit("group_conversation_create", {
-                        groupId: data.groupId,
-                        title: data.title,
-                        users: data.users
+            ack(group)
+            for (i in connectedUsers) {
+                if(data.users.includes(connectedUsers[i].id) && connectedUsers[i].socketId !== socket.id) {
+                    socket.broadcast.to(connectedUsers[i].socketId).emit('group_conversation_create', {
+                        groupId: group._id,
+                        title: group.title,
+                        users: group.users
                     })
                 }
             }
@@ -190,15 +191,15 @@ exports.group_conversation_create = (data, socket) => {
     })
 }
 
-exports.group_conversation_create = (data, socket) => {
+exports.group_conversation_remove = (data, socket) => {
     Groups.remove({ _id: data.groupId }, (groupErr, group) => {
         if (groupErr) {
             console.log("error")
         }
         else {
-            for (i in data.users) {
-                if(data.users[i] !== data.userId) {
-                    socket.broadcast.to(connectedUsers.socketId).emit("group_conversation_delete", {
+            for (i in connectedUsers) {
+                if(connectedUsers[i].groups.includes(data.groupId)) {
+                    socket.broadcast.to(connectedUsers[i].socketId).emit("group_conversation_delete", {
                         groupId: data.groupId,
                     })
                 }
