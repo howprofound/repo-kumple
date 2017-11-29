@@ -24,10 +24,11 @@ exports.conversation_history = (req, res) => {
             })
         }
         else {
-            Conversations.create({ title: "New", users: [req.userID, req.params.id]
+            Conversations.create({users: [req.userID, req.params.id]
             }, (newConversationErr, newConversation) => {
                 res.send({
                     status: "success",
+                    conversationId: conversation._id,
                     messages: []
                 })
             })

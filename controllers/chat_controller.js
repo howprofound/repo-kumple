@@ -3,8 +3,58 @@ const Conversations = require('../models/conversation')
 const Messages = require('../models/message')
 const Groups = require('../models/group')
 const GroupMessages = require('../models/group_message')
+const Files = require('../models/files')
 
 var connectedUsers = []
+
+const createMessage = (message, ack, socket, fileId) => {
+  Messages.create({
+      content: message.content,
+      author: message.author,
+      wasDelivered: true,
+      wasSeen: false,
+      conversationId: message.conversationId,
+      isFile: message.isFile,
+      fileId: fileId
+
+  }, (err, messageInstance) => {
+      if (err) {
+          console.log("error")
+      }
+      else {
+          let target = connectedUsers.find(user => user.id === message.addresse)
+          if (target) {
+              socket.broadcast.to(target.socketId).emit("new_message", messageInstance)
+          }
+          ack(messageInstance._id)
+      }
+  })
+}
+
+const createGroupMessage = (message, ack, socket, fileId) => {
+  GroupMessages.create({
+      content: message.content,
+      author: message.author,
+      wasDelivered: true,
+      wasSeenBy: [],
+      groupId: message.groupId,
+      isFile: message.isFile,
+      fileId: fileId
+
+  }, (err, messageInstance) => {
+      if (err) {
+          console.log("error")
+      }
+      else {
+          for (i in connectedUsers) {
+              if(connectedUsers[i].groups.includes(message.groupId) && connectedUsers[i].id !== message.author){
+                  socket.broadcast.to(connectedUsers.socketId).emit("new_group_message", messageInstance)
+                  ack(messageInstance._id)
+              }
+          }
+      }
+  })
+}
 
 exports.load_chat_data = (req, res) => {
     Users.find({_id: { $ne: req.userID }}, 'username _id', (err, users) => {
@@ -56,25 +106,35 @@ exports.chat_disconnection = socket => {
 }
 
 exports.new_message = (message, ack, socket) => {
-    Messages.create({
-        content: message.content,
-        author: message.author,
-        wasDelivered: true,
-        wasSeen: false,
-        conversationId: message.conversationId
 
-    }, (err, messageInstance) => {
-        if (err) {
-            console.log("error")
-        }
-        else {
-            let target = connectedUsers.find(user => user.id === message.addresse)
-            if (target) {
-                socket.broadcast.to(target.socketId).emit("new_message", messageInstance)
+  if (message.isFIle) {
+    var timeInMs = Date.now()
+    fs.writeFile('public/files/' + timeInMs, message.file, "binary", function(err) {
+    if(err) {
+        console.log(err)
+    } else {
+        console.log("The file was saved!")
+        Files.create({
+            fileName: timeInMs,
+            fileOriginalName: message.fileName
+
+        }, (err, fileInstance) => {
+            if (err) {
+                console.log("error")
+                fs.unlink('public/files/' + timeInMs, (err) => {
+                if (err) throw err;
+                  console.log('successfully deleted /public/files/' + timeInMs);
+                });
             }
-            ack(messageInstance._id)
-        }
+            else {
+                createMessage(message, ack, socket, fileInstance._id)
+            }
+        })
+      }
     })
+  }else {
+      createMessage(message, ack, socket)
+  }
 }
 
 exports.message_seen = (data, socket) => {
@@ -83,6 +143,9 @@ exports.message_seen = (data, socket) => {
             console.log("error")
         }
         else {
+            if (isFIle) {
+                //todo
+            }
             let target = connectedUsers.find(user => user.id === data.author)
             if (target) {
                 socket.broadcast.to(target.socketId).emit("message_seen", data.conversationId)
@@ -92,26 +155,35 @@ exports.message_seen = (data, socket) => {
 }
 
 exports.new_group_message = (message, ack, socket) => {
-    GroupMessages.create({
-        content: message.content,
-        author: message.author,
-        wasDelivered: true,
-        wasSeenBy: [],
-        groupId: message.groupId
 
-    }, (err, messageInstance) => {
-        if (err) {
-            console.log("error")
+    if (message.isFIle) {
+      var timeInMs = Date.now()
+      fs.writeFile('public/files/' + timeInMs, message.file, "binary", function(err) {
+      if(err) {
+          console.log(err)
+      } else {
+          console.log("The file was saved!")
+          Files.create({
+              fileName: timeInMs,
+              fileOriginalName: message.fileName
+
+          }, (err, fileInstance) => {
+              if (err) {
+                  console.log("error")
+                  fs.unlink('public/files/' + timeInMs, (err) => {
+                  if (err) throw err;
+                    console.log('successfully deleted /public/files/' + timeInMs);
+                  });
+              }
+              else {
+                  createMessage(message, ack, socket, fileInstance._id)
+              }
+          })
         }
-        else {
-            for (i in connectedUsers) {
-                if(connectedUsers[i].groups.includes(message.groupId) && connectedUsers[i].id !== message.author){
-                    socket.broadcast.to(connectedUsers.socketId).emit("new_group_message", messageInstance)
-                    ack(messageInstance._id)
-                }
-            }
-        }
-    })
+      })
+    }else {
+        createMessage(message, ack, socket)
+    }
 }
 
 exports.group_message_seen = (data, socket) => {
@@ -126,81 +198,6 @@ exports.group_message_seen = (data, socket) => {
                     socket.broadcast.to(connectedUsers.socketId).emit("group_message_seen", {
                         groupId: data.groupId,
                         userId: data.userId
-                    })
-                }
-            }
-        }
-    })
-}
-
-exports.add_user_to_group = (data, socket) => {
-    Groups.findOneAndUpdate({ groupId: data.groupId },
-        { $addToSet: { users: data.userId } }, (err, group) => {
-        if(err) {
-            console.log("error")
-        }
-        else {
-            for (i in connectedUsers) {
-                if(connectedUsers[i].groups.includes(data.groupId)) {
-                    socket.broadcast.to(connectedUsers[i].socketId).emit("add_user_to_group", {
-                        groupId: data.groupId,
-                        userId: data.userId
-                    })
-                }
-            }
-        }
-    })
-}
-
-exports.delete_user_from_group = (data, socket) => {
-    Groups.findOneAndUpdate({ groupId: data.groupId },
-        { $pull: { users: data.userId } }, (err, group) => {
-        if(err) {
-            console.log("error")
-        }
-        else {
-            for (i in connectedUsers) {
-                if(connectedUsers[i].groups.includes(data.groupId)) {
-                    socket.broadcast.to(connectedUsers[i].socketId).emit("delete_user_from_group", {
-                        groupId: data.groupId,
-                        userId: data.userId
-                    })
-                }
-            }
-        }
-    })
-}
-
-exports.group_conversation_create = (data, socket, ack) => {
-    Groups.create({ title: data.title, users: data.users }, (groupErr, group) => {
-        if (groupErr) {
-            console.log("error")
-        }
-        else {
-            ack(group)
-            for (i in connectedUsers) {
-                if(data.users.includes(connectedUsers[i].id) && connectedUsers[i].socketId !== socket.id) {
-                    socket.broadcast.to(connectedUsers[i].socketId).emit('group_conversation_create', {
-                        groupId: group._id,
-                        title: group.title,
-                        users: group.users
-                    })
-                }
-            }
-        }
-    })
-}
-
-exports.group_conversation_remove = (data, socket) => {
-    Groups.remove({ _id: data.groupId }, (groupErr, group) => {
-        if (groupErr) {
-            console.log("error")
-        }
-        else {
-            for (i in connectedUsers) {
-                if(connectedUsers[i].groups.includes(data.groupId)) {
-                    socket.broadcast.to(connectedUsers[i].socketId).emit("group_conversation_delete", {
-                        groupId: data.groupId,
                     })
                 }
             }

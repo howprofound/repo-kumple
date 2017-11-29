@@ -21,7 +21,15 @@ var MessageSchema = new mongoose.Schema({
   conversationId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Conversation'
-  }
+  },
+  isFile: {
+    type: Boolean,
+    default: false
+  },
+  fileId: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Files'
+  }]
 });
 
 module.exports = mongoose.model('Message', MessageSchema, 'Message')

@@ -21,7 +21,15 @@ var Group_messageSchema = new mongoose.Schema({
   groupId: {
   	type: mongoose.Schema.Types.ObjectId,
   	ref: 'Group'
-  }
+  },
+  isFile: {
+    type: Boolean,
+    default: false
+  },
+  fileId: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Files'
+  }]
 });
 
 module.exports = mongoose.model('Group_message', Group_messageSchema, 'Group_message')
