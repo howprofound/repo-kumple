@@ -176,13 +176,14 @@ exports.new_group_message = (message, ack, socket) => {
                   });
               }
               else {
-                  createMessage(message, ack, socket, fileInstance._id)
+                  creatGroupeMessage(message, ack, socket, fileInstance._id)
               }
           })
-        }
+      }
       })
-    }else {
-        createMessage(message, ack, socket)
+    }
+    else {
+        creatGroupeMessage(message, ack, socket)
     }
 }
 
