@@ -1,5 +1,5 @@
 const Users = require('../models/user')
-const Conversations = require('../models/conversation')
+//const Conversations = require('../models/conversation')
 const Messages = require('../models/message')
 const Groups = require('../models/group')
 const GroupMessages = require('../models/group_message')
@@ -8,6 +8,34 @@ var connectedUsers = []
 
 exports.load_chat_data = (req, res) => {
     Users.find({_id: { $ne: req.userID }}, 'username _id avatar firstName lastName email bio', (err, users) => {
+
+        // to do
+        /*users.foreach((userId) => {
+            Conversations.find({ users: { $all: [req.userID, userId] } }, '_id', (err, conversationsId) => {
+                if(err) {
+                    res.send({
+                        status: "error"
+                    })
+                }
+                else {
+                    Messages.count({ conversationId: wasSeen: false, author: users.author }, (err, messagesCount) => {
+                        if(err) {
+                            res.send({
+                                status: "error"
+                            })
+                        }
+                        else {
+                            let target = connectedUsers.find(user => user.id === data.author)
+                            if (target) {
+                                socket.broadcast.to(target.socketId).emit("message_seen", data.conversationId)
+                            }
+                        }
+                    })
+                }
+            })
+        })*/
+        
+        
         Groups.find({users: req.userID}, (err, groups) => {
             if(err) {
                 res.send({
@@ -15,10 +43,18 @@ exports.load_chat_data = (req, res) => {
                 })
             }
             else {
-                res.send({
-                    status: "success",
-                    users: users,
-                    groups: groups
+                let unreadGroups = []
+                groups.forEach((group) => {
+                    GroupMessages.count({ groupId: group._id, wasSeenBy: { $ne: req.userID }, author: { $ne: req.userID } }, (err, count) => {
+                        unreadGroups.push({ group: group, unreadMessages: count })
+                        if(unreadGroups.length  === groups.length) {
+                            res.send({
+                                status: "success",
+                                users: users,
+                                groups: unreadGroups
+                            })
+                        }
+                    })
                 })
             }
         })
@@ -85,14 +121,14 @@ exports.new_message = (message, ack, socket) => {
 }
 
 exports.message_seen = (data, socket) => {
-    Messages.update({ conversationId: data.conversationId, wasSeen: false, author: data.author }, { $set: { wasSeen: true } }, { multi: true }, (err, messages) => {
+    Messages.update({ recipient: data.recipient, wasSeen: false, author: data.author }, { $set: { wasSeen: true } }, { multi: true }, (err, messages) => {
         if(err) {
             console.log("error")
         }
         else {
             let target = connectedUsers.find(user => user.id === data.author)
             if (target) {
-                socket.broadcast.to(target.socketId).emit("message_seen", data.conversationId)
+                socket.broadcast.to(target.socketId).emit("message_seen", data.recipient)
             }
         }
     })
