@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 
-//const Conversations = require('../models/conversation')
 const Messages = require('../models/message')
 const Groups = require('../models/group')
 const GroupMessages = require('../models/group_message')
