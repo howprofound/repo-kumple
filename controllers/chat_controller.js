@@ -51,7 +51,7 @@ exports.load_chat_data = (req, res) => {
                 res.send({
                     status: "success",
                     users: users,
-                    groups: unreadGroups
+                    groups: groups
                 })
             }
         })
