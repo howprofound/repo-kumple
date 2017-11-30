@@ -3,6 +3,7 @@
   <div class="nav-row" *ngFor="let group of groups" (click)="groupClick(group)">
     <mat-icon>forum</mat-icon>
     <span class="nav-text-wrapper">{{group.title}}</span>
+    <span class="badge" *ngIf="group.unreadMessages > 0">{{group.unreadMessages}}</span> 
   </div>
   <div class="nav-row" id="new-group-row" (click)="newGroupClick()">
     <mat-icon>add</mat-icon>
@@ -14,6 +15,6 @@
   <div class="nav-row" *ngFor="let user of users" (click)="userClick(user)">
      <span class="active-status" [class.active]="user.isActive"></span>
      <span class="nav-text-wrapper" matLine>{{user.username}}</span>
-     <span class="unread-messages-chip" *ngIf="user.unreadMessages > 0">{{user.unreadMessages}}</span> 
+     <span class="badge" *ngIf="user.unreadMessages > 0">{{user.unreadMessages}}</span> 
   </div>
 </div>

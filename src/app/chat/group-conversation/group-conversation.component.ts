@@ -45,6 +45,7 @@ export class GroupConversationComponent implements OnInit {
     })
   }
   getMessageAck(id) {
+    console.log(id)
     this.messages = this.messages.map(message => {
 			if(!message._id) {
 				return Object.assign(message, { wasDelivered: true, _id: id })

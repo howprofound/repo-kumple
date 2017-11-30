@@ -55,6 +55,7 @@ export class ChatComponent implements OnInit {
 			}
 		})
 		this.userStream = this.chatService.monitorUsers().subscribe(data => {
+			console.log(data, this.id)
 			this.users
 				.find(user => user._id === data['id'])
 				.isActive = data['isActive']
@@ -136,6 +137,7 @@ export class ChatComponent implements OnInit {
 		}
 
 		this.chatService.getChatData().subscribe(data => {
+			console.log(data)
 			this.users = data['users'].map(user => {
 				return Object.assign(user, { isActive: false })
 			})

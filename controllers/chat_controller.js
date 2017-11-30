@@ -42,12 +42,21 @@ exports.load_chat_data = (req, res) => {
                     status: "error"
                 })
             }
-            else {
-                groups.forEach((group) => {
+            else if(groups.length > 0) {
+                groups.forEach((group, index) => {
                     GroupMessages.count({ groupId: group._id, wasSeenBy: { $ne: req.userID }, author: { $ne: req.userID } }, (err, count) => {
-                        group.unreadMessages = count      
+                        group.unreadMessages = count
+                        if(index === groups.length - 1) {
+                            res.send({
+                                status: "success",
+                                users: users,
+                                groups: groups
+                            })
+                        }      
                     })
                 })
+            }
+            else {
                 res.send({
                     status: "success",
                     users: users,
@@ -153,9 +162,9 @@ exports.new_group_message = (message, ack, socket) => {
                     for (i in connectedUsers) {
                         if(connectedUsers[i].groups.includes(message.groupId) && connectedUsers[i].id !== message.author){
                             socket.broadcast.to(connectedUsers.socketId).emit("new_group_message", messageInstance)
-                            ack(messageInstance._id)
                         }
                     }
+                    ack(messageInstance._id)
                 }
             })
 
