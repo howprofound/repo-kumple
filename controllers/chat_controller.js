@@ -8,64 +8,60 @@ var connectedUsers = []
 
 exports.load_chat_data = (req, res) => {
     Users.find({_id: { $ne: req.userID }}, 'username _id avatar firstName lastName email bio', (err, users) => {
-
-        // to do
-        /*users.foreach((userId) => {
-            Conversations.find({ users: { $all: [req.userID, userId] } }, '_id', (err, conversationsId) => {
-                if(err) {
+        let usersCount = []
+        users.forEach((user, index) => {
+            Messages.count({ wasSeen: false, author: user, recipient: req.userID }, (messageErr, count) => {
+                if (messageErr) {
                     res.send({
                         status: "error"
                     })
                 }
                 else {
-                    Messages.count({ conversationId: wasSeen: false, author: users.author }, (err, messagesCount) => {
-                        if(err) {
-                            res.send({
-                                status: "error"
-                            })
-                        }
-                        else {
-                            let target = connectedUsers.find(user => user.id === data.author)
-                            if (target) {
-                                socket.broadcast.to(target.socketId).emit("message_seen", data.conversationId)
+                    let cloneUser = JSON.parse(JSON.stringify(user))
+                    cloneUser.unreadMessages = count;
+                    usersCount.push(cloneUser)
+                    if (index === users.length - 1) {
+                        Groups.find({users: req.userID}, (groupsFindErr, groups) => {
+                            if (groupsFindErr) {
+                                res.send({
+                                    status: "error"
+                                })
                             }
-                        }
-                    })
+                            else if(groups.length > 0) {
+                                let groupsCount = []
+                                groups.forEach((group, index) => {
+                                    GroupMessages.count({ groupId: group._id, wasSeenBy: { $ne: req.userID }, author: { $ne: req.userID } }, (groupsMessageErr, count) => {
+                                        if (groupsMessageErr) {
+                                            res.send({
+                                                status: "error"
+                                            })
+                                        }
+                                        else {
+                                            let cloneGroup = JSON.parse(JSON.stringify(group));
+                                            cloneGroup.unreadMessages = count;
+                                            groupsCount.push(cloneGroup)
+                                            if(index === groups.length - 1) {
+                                                res.send({
+                                                    status: "success",
+                                                    users: usersCount,
+                                                    groups: groupsCount
+                                                })
+                                            }
+                                        }    
+                                    })
+                                })
+                            }
+                            else {
+                                res.send({
+                                    status: "success",
+                                    users: usersCount,
+                                    groups: groups
+                                })
+                            }
+                        })
+                    }
                 }
             })
-        })*/
-        
-        
-        Groups.find({users: req.userID}, (err, groups) => {
-            if(err) {
-                res.send({
-                    status: "error"
-                })
-            }
-            else if(groups.length > 0) {
-                let groupsCount = []
-                groups.forEach((group, index) => {
-                    GroupMessages.count({ groupId: group._id, wasSeenBy: { $ne: req.userID }, author: { $ne: req.userID } }, (err, count) => {
-                        let cloneGroup = JSON.parse(JSON.stringify(group));
-                        cloneGroup.unreadMessages = count;
-                        groupsCount.push(cloneGroup)
-                        if(index === groups.length - 1) {
-                            res.send({
-                                status: "success",
-                                users: users,
-                                groups: groupsCount
-                            })
-                        }      
-                    })
-                })
-            }
-            else {
-                res.send({
-                    status: "success",
-                    users: users,
-                    groups: groups
-                })
-            }
         })
     })
 }
