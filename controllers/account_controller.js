@@ -4,6 +4,7 @@ const crypto = require('crypto')
 const Users = require('../models/user')
 const jimp = require('jimp')
 const fs = require('fs')
+const lowerCase = require('lower-case')
 
 const sendStatusAndUnlink = (req, res, status = "error") => {
     if(req.file)
@@ -19,6 +20,8 @@ const processAvatar = (file) => {
 
 const createUser = (req, res) => {
     console.log(req.body)
+    req.body.username = lowerCase(req.body.username)
+    req.body.email = lowerCase(req.body.email)
     req.body.password = crypto.createHash('sha1').update(req.body.password).digest('hex')
     Users.create(req.body, (errCreate, user) => {
         if(errCreate) {
@@ -34,6 +37,8 @@ const createUser = (req, res) => {
 
 
 exports.user_register = (req, res) => {
+    req.body.username = lowerCase(req.body.username)
+    req.body.email = lowerCase(req.body.email)
     Users.findOne({ username: req.body.username }, (errUsername, user) => {
         if(errUsername) {
             sendStatusAndUnlink(req, res, "error")
@@ -70,6 +75,8 @@ exports.user_register = (req, res) => {
 }
 
 exports.user_login = (req, res) => {
+    req.body.username = lowerCase(req.body.username)
+    req.body.email = lowerCase(req.body.email)
     Users.findOne({ username: req.body.username }, (err, user) => {
         console.log(req.body)
         if(err) {
