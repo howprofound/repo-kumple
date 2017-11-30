@@ -2,7 +2,7 @@
 <h1 mat-dialog-title>Create new group</h1>
 <mat-dialog-content>
 	<mat-form-field>
-  		<input matInput placeholder="Group name" name="title" autofocus required [(ngModel)]="data.title">
+  		<input matInput placeholder="Group name" name="title" autofocus required [(ngModel)]="returnData.title">
 	</mat-form-field>
 	<mat-selection-list>
 		<mat-list-option *ngFor="let user of data.users" (click)="onUserSelect(user)">
@@ -12,7 +12,7 @@
 </mat-dialog-content>
 <mat-dialog-actions>
 	<span class="spacer"></span>
-  	<button mat-raised-button color="primary" [mat-dialog-close]="data">
+  	<button mat-raised-button color="primary" [mat-dialog-close]="returnData">
   		<mat-icon>add</mat-icon> Create
   	</button>
   	<button mat-raised-button color="accent" mat-dialog-close>

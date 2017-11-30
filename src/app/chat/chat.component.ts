@@ -99,7 +99,7 @@ export class ChatComponent implements OnInit {
 		let dialogRef = this.dialog.open(NewGroupComponent, {
 			data: {
 				users: this.users,
-				title: ""
+				title: "",
 			},
 			width: '600px',
 			height: 'auto'
@@ -108,7 +108,7 @@ export class ChatComponent implements OnInit {
 			if(data) {
 				let dataToSend = {
 					title: data.title,
-					users: data.users.map(user => user._id)
+					users: data.selectedUsers
 				}
 				dataToSend.users.push(this.id)
 				this.chatService.sendNewGroupMessage(dataToSend, this.getNewGroupAck.bind(this))
