@@ -43,14 +43,17 @@ exports.load_chat_data = (req, res) => {
                 })
             }
             else if(groups.length > 0) {
+                let groupsCount = []
                 groups.forEach((group, index) => {
                     GroupMessages.count({ groupId: group._id, wasSeenBy: { $ne: req.userID }, author: { $ne: req.userID } }, (err, count) => {
-                        group.unreadMessages = count
+                        let cloneGroup = JSON.parse(JSON.stringify(group));
+                        cloneGroup.unreadMessages = count;
+                        groupsCount.push(cloneGroup)
                         if(index === groups.length - 1) {
                             res.send({
                                 status: "success",
                                 users: users,
-                                groups: groups
+                                groups: groupsCount
                             })
                         }      
                     })
