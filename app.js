@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: false, limit: '5mb'}))
 
 mongoose.connect(db.url, { useMongoClient: true }, database => {
 	require('./routes')(app, database, io)
-	http.listen(port, () => {
+	http.listen(process.env.PORT || 8080, () => {
 		console.log('We are live on ' + port)
 	})
 })         	 
