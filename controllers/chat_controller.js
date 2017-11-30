@@ -68,11 +68,18 @@ exports.new_message = (message, ack, socket) => {
             console.log("error")
         }
         else {
-            let target = connectedUsers.find(user => user.id === message.addresse)
-            if (target) {
-                socket.broadcast.to(target.socketId).emit("new_message", messageInstance)
-            }
-            ack(messageInstance._id)
+            Messages.populate(messageInstance, {path: 'author', select: "_id username"}, (populateErr, messageInstance) => {    
+                if(populateErr) {
+                    console.log(populateErr)
+                }    
+                else {
+                    let target = connectedUsers.find(user => user.id === message.addresse)
+                    if (target) {
+                        socket.broadcast.to(target.socketId).emit("new_message", messageInstance)
+                    }
+                    ack(messageInstance._id)
+                }    
+            })
         }
     })
 }

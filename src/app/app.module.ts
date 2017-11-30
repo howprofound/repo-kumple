@@ -4,42 +4,26 @@ import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
-
+import { ChatModule } from './chat/chat.module'
 
 import { 
-        MatCardModule, 
-        MatListModule, 
-        MatIconModule, 
-        MatInputModule, 
-        MatButtonModule, 
-        MatProgressSpinnerModule, 
+        MatCardModule,
+        MatInputModule,
+        MatButtonModule,
+        MatProgressSpinnerModule,
         MatSnackBarModule,
-        MatSidenavModule,
-        MatToolbarModule,
-        MatChipsModule,
-        MatDialogModule
       } from '@angular/material';
 
 import { AppComponent } from './app.component';
-import { ChatService } from './chat.service';
 import { AuthService } from './auth.service';
 import { LoginComponent } from './login/login.component';
-import { ChatComponent } from './chat/chat.component';
 import { AuthGuardService } from './auth-guard.service';
-import { ConversationComponent } from './conversation/conversation.component';
 import { RegisterComponent } from './register/register.component';
-import { NewGroupComponent } from './chat/new-group/new-group.component';
 
 const ROUTES = [
   {
     path: '',
     component: LoginComponent
-  },
-  {
-    path: 'chat',
-    component: ChatComponent,
-    pathMatch: 'full',
-    canActivate: [AuthGuardService]
   },
   {
     path: 'register',
@@ -52,35 +36,23 @@ const ROUTES = [
   declarations: [
     AppComponent,
     LoginComponent,
-    ChatComponent,
-    ConversationComponent,
-    RegisterComponent,
-    NewGroupComponent
-  ],
-  entryComponents: [
-    NewGroupComponent
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    ChatModule,
     RouterModule.forRoot(ROUTES),
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
     MatCardModule,
-    MatListModule,
-    MatIconModule,
     MatInputModule,
     MatButtonModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatChipsModule,
-    MatDialogModule
   ],
   providers: [
-    ChatService,
     AuthService,
     AuthGuardService
   ],

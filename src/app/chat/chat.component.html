@@ -1,31 +1,21 @@
 <mat-toolbar color="primary" [@slideTop]>Awesome Chat</mat-toolbar>
 <mat-sidenav-container>
-	<mat-sidenav mode="side" opened="true" disableClose="true" id="left-sidenav" [@slideLeft]>
-		<h5>GROUPS</h5>
-		<div id="nav-group-section">
-			<div class="nav-row" *ngFor="let group of groups">
-				<mat-icon>forum</mat-icon>
-				<span class="nav-text-wrapper">{{group.title}}</span>
-			</div>
-			<div class="nav-row" id="new-group-row" (click)="onNewGroupClick()">
-				<mat-icon>add</mat-icon>
-				<span class="nav-text-wrapper">Create a group</span>
-			</div>
-		</div>
-		<h5>PEOPLE</h5>
-		<div id="nav-people-section">
-			<div class="nav-row" *ngFor="let user of users" (click)="startPrivateConversation(user)">
-			 	<span class="active-status" [class.active]="user.isActive"></span>
-			 	<span class="nav-text-wrapper" matLine>{{user.username}}</span>
-			 	<span class="unread-messages-chip" *ngIf="user.unreadMessages > 0">{{user.unreadMessages}}</span> 
-			</div>
-		</div>
+	<mat-sidenav mode="side" opened="{{!isLoading}}" disableClose="true" id="left-sidenav">
+		<chat-sidenav 
+			[users]="users" 
+			[groups]="groups" 
+			(onUserClick)="startPrivateConversation($event)"
+			(onGroupClick)="startGroupConversation($event)"
+			(onNewGroupClick)="onNewGroupClick($event)"></chat-sidenav>
 	</mat-sidenav>
 	<div class="main-content" [ngSwitch]="activeView">
 		<mat-spinner *ngSwitchCase="'loading'" [diameter]="150"></mat-spinner>
 		<div *ngSwitchCase="'welcome'" class="welcome-block"  [@show]>
 			Welcome to our <u>awesome chat</u>!
 		</div>
-		<conversation *ngSwitchCase="'conversation'" [id]="id" [addresse]="conversationId" [title]="conversationTitle" [username]="username" [user]="currentChatPartner"></conversation>
+		<conversation *ngSwitchCase="'conversation'" 
+			[id]="id" [convPartner]="currentChatPartner" [username]="username"></conversation>
+		<group-conversation *ngSwitchCase="'group-conversation'" 
+			[id]="id" [group]="currentChatGroup" [username]="username" [users]="currentChatUsers"></group-conversation>
 	</div>
 </mat-sidenav-container>

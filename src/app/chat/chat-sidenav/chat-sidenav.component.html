@@ -1,0 +1,19 @@
+<h5>GROUPS</h5>
+<div id="nav-group-section">
+  <div class="nav-row" *ngFor="let group of groups" (click)="groupClick(group)">
+    <mat-icon>forum</mat-icon>
+    <span class="nav-text-wrapper">{{group.title}}</span>
+  </div>
+  <div class="nav-row" id="new-group-row" (click)="newGroupClick()">
+    <mat-icon>add</mat-icon>
+    <span class="nav-text-wrapper">Create a group</span>
+  </div>
+</div>
+<h5>PEOPLE</h5>
+<div id="nav-people-section">
+  <div class="nav-row" *ngFor="let user of users" (click)="userClick(user)">
+     <span class="active-status" [class.active]="user.isActive"></span>
+     <span class="nav-text-wrapper" matLine>{{user.username}}</span>
+     <span class="unread-messages-chip" *ngIf="user.unreadMessages > 0">{{user.unreadMessages}}</span> 
+  </div>
+</div>

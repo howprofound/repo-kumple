@@ -1,0 +1,17 @@
+<mat-toolbar>@{{convPartner.username}}</mat-toolbar>
+<mat-sidenav-container>
+	<mat-sidenav mode="side" opened="true" disableClose="true" position="end">
+		<div class="user-data">
+			<img src="/images/{{convPartner.avatar}}"/>
+			<span class="user-username">@{{convPartner.username}}</span>
+			<span class="user-name">
+				{{convPartner.firstName}} {{convPartner.lastName}} 
+			</span>
+			<hr>
+			<p>
+				{{convPartner.bio}}
+			</p>
+		</div>
+	</mat-sidenav>
+	<conversation-body [id]="id" [messages]="messagesToDisplay" (onSendMessage)="onSendMessage($event)"></conversation-body>
+</mat-sidenav-container>

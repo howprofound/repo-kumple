@@ -14,14 +14,16 @@ exports.conversation_history = (req, res) => {
             })
         }
         else if (conversation) {
-            Messages.find({ conversationId: conversation._id
-            }, (messagesErr, messages) => {
-                res.send({
-                    status: "success",
-                    messages: messages,
-                    conversationId: conversation._id
+            Messages
+                .find({ conversationId: conversation._id})
+                .populate('author', '_id username')
+                .exec((messagesErr, messages) => {
+                    res.send({
+                        status: "success",
+                        messages: messages,
+                        conversationId: conversation._id
+                    })
                 })
-            })
         }
         else {
             Conversations.create({ title: "New", users: [req.userID, req.params.id]

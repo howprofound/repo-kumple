@@ -6,6 +6,9 @@ const jwt = require('jsonwebtoken')
 
 const chat_controller = require('../controllers/chat_controller')
 
+
+const fs = require('fs')
+
 module.exports = (app, db, io) => {
 	app.use(/^\/api\/(?!(login|register)).*$/, (req, res, next) => {
 		jwt.verify(req.headers.authorization, 'supersecretsecret', (err, decoded) => {

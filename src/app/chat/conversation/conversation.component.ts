@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, OnChanges, ElementRef, ViewChild, AfterViewChecked } from '@angular/core'
-import { ChatService } from '../chat.service'
+import { Component, OnInit, Input, OnChanges } from '@angular/core'
+import { ChatService } from '../../chat.service'
 import { trigger, style, animate, transition } from '@angular/animations';
 
 @Component({
@@ -13,15 +13,11 @@ import { trigger, style, animate, transition } from '@angular/animations';
 	]
 })
 
-export class ConversationComponent implements OnInit, OnChanges, AfterViewChecked {
+export class ConversationComponent implements OnInit, OnChanges {
 	@Input() id: string;
-	@Input() addresse: string;
-	@Input() title: string;
+	@Input() convPartner;
 	@Input() username: string;
-	@Input() user;
-	@ViewChild('conversationBody') private conversationBody: ElementRef;
 	conversationId: string;
-	message: string;
 	messages = [];
 	messagesToDisplay = [];
 	messageStream;
@@ -29,7 +25,7 @@ export class ConversationComponent implements OnInit, OnChanges, AfterViewChecke
 	constructor(private chatService: ChatService) { }
 
 	getHistory() {
-		this.chatService.getHistory(this.addresse).subscribe(history => {
+		this.chatService.getHistory(this.convPartner._id).subscribe(history => {
 			this.messages = history['messages'].sort((a,b) => {
 				a = new Date(a.date)
     			b = new Date(b.date)
@@ -37,20 +33,8 @@ export class ConversationComponent implements OnInit, OnChanges, AfterViewChecke
 			})
 			this.conversationId = history['conversationId']
 			this.groupMessagesToDisplay()
-			this.chatService.sendSeenMessage(this.conversationId, this.addresse)
+			this.chatService.sendSeenMessage(this.conversationId, this.convPartner._id)
 		})
-	}
-
-	getMessageStatus(message) {
-		if(message.wasSeen) {
-			return "Seen"
-		}
-		else if(message.wasDelivered) {
-			return "Delivered"
-		}
-		else {
-			return "Sending..."
-		}
 	}
 
 	groupMessagesToDisplay() {
@@ -62,20 +46,13 @@ export class ConversationComponent implements OnInit, OnChanges, AfterViewChecke
 	}
 
 	addNewMessageToDisplay(message) {
-		if(this.messagesToDisplay.length === 0 || this.messagesToDisplay[this.messagesToDisplay.length - 1][0].author !== message.author) {
+		if(this.messagesToDisplay.length === 0 || this.messagesToDisplay[this.messagesToDisplay.length - 1][0].author._id !== message.author._id) {
 			this.messagesToDisplay.push([message])
 		}
 		else {
 			this.messagesToDisplay[this.messagesToDisplay.length - 1].push(message)
 		}
 	}
-
-    scrollToBottom(): void {
-        try {
-            this.conversationBody.nativeElement.scrollTop = this.conversationBody.nativeElement.scrollHeight;
-        } catch(err) { 
-        }                 
-    }
 
 	ngOnInit() {
 		this.messageStream = this.chatService.messageAnnounced.subscribe(message => {
@@ -99,14 +76,11 @@ export class ConversationComponent implements OnInit, OnChanges, AfterViewChecke
  	ngOnChanges() {
  		this.messages = []
  		this.messagesToDisplay = []
- 		if(this.isInitialized){
+ 		if(this.isInitialized) {
 	 		this.getHistory()
- 		}
+		}
+		
  	}
-
- 	ngAfterViewChecked() {
-    	this.scrollToBottom();
-  	}
 
 	getMessageAck(id) {
 		this.messages = this.messages.map(message => {
@@ -118,23 +92,21 @@ export class ConversationComponent implements OnInit, OnChanges, AfterViewChecke
 			}
 		})
 	}
-	sendMessage(e) {
-		if(e.keyCode === 13) {
-			this.chatService.sendMessage(this.message, this.addresse, this.conversationId, this.getMessageAck.bind(this))
-			this.messages.push({
-				content: this.message,
-				wasDelivered: false,
-				author: this.id,
-				wasSeen: false,
-				date: Date.now()
-			})
-			this.message = ''
-			this.addNewMessageToDisplay(this.messages[this.messages.length - 1])
-		}
+	onSendMessage(message) {
+		this.chatService.sendMessage(message, this.convPartner._id, this.conversationId, this.getMessageAck.bind(this))
+		this.messages.push({
+			content: message,
+			wasDelivered: false,
+			author: {
+				_id: this.id,
+				username: this.username
+			},
+			wasSeen: false,
+			date: Date.now()
+		})
+		this.addNewMessageToDisplay(this.messages[this.messages.length - 1])
 	}
 	ngOnDestroy() {
 		this.messageStream.unsubscribe()
 	}
-
-
 }

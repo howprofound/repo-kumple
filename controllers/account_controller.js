@@ -51,7 +51,6 @@ exports.user_register = (req, res) => {
                 }
                 else {
                     if(req.file) {
-                        console.log("TEST")
                         processAvatar(req.file).then(avatar => {
                             let filename = Date.now() + ".jpg"
                             avatar.resize(256, 256).write('public/' + filename)
@@ -62,7 +61,6 @@ exports.user_register = (req, res) => {
                         })
                     }
                     else {
-                        console.log("TEST@12")
                         createUser(req, res)
                     }
                 }

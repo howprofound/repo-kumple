@@ -57,9 +57,14 @@ export class ChatService {
     return observable
   }
 
-  getHistory(id) {
-    console.log(`/api/conversation/history/${id}`)
-    return this.http.get<any[]>(`/api/conversation/history/${id}`, {
+  getHistory(partnerId) {
+    return this.http.get<any[]>(`/api/conversation/history/${partnerId}`, {
+      headers: new HttpHeaders().set('Authorization', this.token)
+    })
+  }
+
+  getGroupHistory(groupId) {
+    return this.http.get<any[]>(`/api/conversation/group_history/${groupId}`, {
       headers: new HttpHeaders().set('Authorization', this.token)
     })
   }

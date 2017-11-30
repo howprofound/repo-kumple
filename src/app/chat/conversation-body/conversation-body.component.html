@@ -1,0 +1,17 @@
+<div class="conversation-container">
+		<div class="conversation-body" #conversationBody>
+			<div class="message-list" *ngFor="let messagesList of messages"  [class.mine]="messagesList[0].author._id === id">
+				<span class="message-author">{{messagesList[0].author.username}}</span> 
+				<span class="message-list-date">{{messagesList[0].date.toLocaleString()}}</span>
+				<span class="message-status" *ngIf="messagesList[0].author === id">
+					{{getMessageStatus(messagesList[messagesList.length-1])}}
+				</span>
+				<div class="message-container" *ngFor="let message of messagesList">
+					{{message.content}}
+				</div>
+			</div>
+		</div>
+		<div class="conversation-input">
+	    	<input (keydown)='sendMessage($event)' [(ngModel)]="message" autofocus placeholder="Type a message...">
+	  	</div>
+	</div>
