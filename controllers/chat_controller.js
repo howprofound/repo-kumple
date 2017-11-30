@@ -43,18 +43,15 @@ exports.load_chat_data = (req, res) => {
                 })
             }
             else {
-                let unreadGroups = []
                 groups.forEach((group) => {
                     GroupMessages.count({ groupId: group._id, wasSeenBy: { $ne: req.userID }, author: { $ne: req.userID } }, (err, count) => {
-                        unreadGroups.push({ group: group, unreadMessages: count })
-                        if(unreadGroups.length  === groups.length) {
-                            res.send({
-                                status: "success",
-                                users: users,
-                                groups: unreadGroups
-                            })
-                        }
+                        group.unreadMessages = count      
                     })
+                })
+                res.send({
+                    status: "success",
+                    users: users,
+                    groups: unreadGroups
                 })
             }
         })
@@ -97,7 +94,7 @@ exports.new_message = (message, ack, socket) => {
         author: message.author,
         wasDelivered: true,
         wasSeen: false,
-        conversationId: message.conversationId
+        recipient: message.recipient
 
     }, (err, messageInstance) => {
         if (err) {
@@ -147,12 +144,20 @@ exports.new_group_message = (message, ack, socket) => {
             console.log("error")
         }
         else {
-            for (i in connectedUsers) {
-                if(connectedUsers[i].groups.includes(message.groupId) && connectedUsers[i].id !== message.author){
-                    socket.broadcast.to(connectedUsers.socketId).emit("new_group_message", messageInstance)
-                    ack(messageInstance._id)
+            GroupMessages.populate(messageInstance, {path: 'author', select: "_id username"}, (populateErr, messageInstance) => {
+                if(populateErr) {
+                    console.log("populateErr")
                 }
-            }
+                else {
+                    for (i in connectedUsers) {
+                        if(connectedUsers[i].groups.includes(message.groupId) && connectedUsers[i].id !== message.author){
+                            socket.broadcast.to(connectedUsers.socketId).emit("new_group_message", messageInstance)
+                            ack(messageInstance._id)
+                        }
+                    }
+                }
+            })
+
         }
     })
 }
