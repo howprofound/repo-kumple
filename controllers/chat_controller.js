@@ -89,13 +89,13 @@ exports.chat_disconnection = socket => {
 }
 
 exports.new_message = (message, ack, socket) => {
+    console.log(message)
     Messages.create({
         content: message.content,
         author: message.author,
         wasDelivered: true,
         wasSeen: false,
         recipient: message.recipient
-
     }, (err, messageInstance) => {
         if (err) {
             console.log("error")
@@ -106,7 +106,8 @@ exports.new_message = (message, ack, socket) => {
                     console.log(populateErr)
                 }    
                 else {
-                    let target = connectedUsers.find(user => user.id === message.addresse)
+                    let target = connectedUsers.find(user => user.id === message.recipient)
+                    console.log(target)
                     if (target) {
                         socket.broadcast.to(target.socketId).emit("new_message", messageInstance)
                     }

@@ -19,6 +19,3 @@ mongoose.connect(db.url, { useMongoClient: true }, database => {
 		console.log('We are live on ' + port)
 	})
 })         	 
-
-
-//https://jsfiddle.net/fscf582h/3/ <--- fiddle to get exercises names

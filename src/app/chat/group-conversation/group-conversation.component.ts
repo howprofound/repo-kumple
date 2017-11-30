@@ -11,8 +11,9 @@ export class GroupConversationComponent implements OnInit {
   @Input() group;
   @Input() username: string;
   @Input() users: Array<any>;
-  messages: Array<any>;
-  messagesToDisplay: Array<any>;
+  messages: Array<any> = [];
+  messagesToDisplay: Array<any> = [];
+  messageStream;
 
   constructor(private chatService: ChatService) { }
 
@@ -40,13 +41,38 @@ export class GroupConversationComponent implements OnInit {
     			b = new Date(b.date)
     			return a < b ? -1 : a > b ? 1 : 0
       })
+      this.groupMessagesToDisplay()
     })
   }
-
-  onSendMessage() {
-
+  getMessageAck(id) {
+    this.messages = this.messages.map(message => {
+			if(!message._id) {
+				return Object.assign(message, { wasDelivered: true, _id: id })
+			}
+			else {
+				return message
+			}
+		})
+  }
+  onSendMessage(message) {
+    this.chatService.sendGroupMessage(message, this.group._id, this.getMessageAck.bind(this))
+    this.messages.push({
+      content: message,
+			wasDelivered: false,
+			author: {
+				_id: this.id,
+				username: this.username
+			},
+			wasSeen: false,
+			date: Date.now()
+    })
+    this.addNewMessageToDisplay(this.messages[this.messages.length - 1])
   }
   ngOnInit() {
     this.getHistory()
+    this.messageStream = this.chatService.messageAnnounced.subscribe(message => {
+      this.messages.push(message)
+      this.addNewMessageToDisplay(message)
+    })
   }
 }

@@ -29,14 +29,16 @@ exports.group_conversation_history = (req, res) => {
             })
         }
         else if (group) {
-            GroupMessages.find({ groupId: group._id
-            }, (messagesErr, messages) => {
-                res.send({
-                    status: "success",
-                    messages: messages,
-                    groupId: group._id
+            GroupMessages
+                .find({ groupId: group._id})
+                .populate('author', '_id username')
+                .exec((messagesErr, messages)  => {
+                    res.send({
+                        status: "success",
+                        messages: messages,
+                        groupId: group._id
+                    })
                 })
-            })
         }
         else {
             res.send({

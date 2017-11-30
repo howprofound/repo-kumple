@@ -19,12 +19,19 @@ export class ChatService {
     this.token = localStorage.getItem('token')
   }
 
-  sendMessage(message, addresse, conversationId, ack) {
+  sendMessage(message, recipient, ack) {
     this.socket.emit('new_message', {
       content: message,
       author: this.jwtHelper.decodeToken(this.token).id,
-      addresse: addresse,
-      conversationId: conversationId
+      recipient: recipient
+    }, ack)
+  }
+
+  sendGroupMessage(message, groupId, ack) {
+    this.socket.emit('new_group_message', {
+      content: message,
+      author: this.jwtHelper.decodeToken(this.token).id,
+      groupId: groupId
     }, ack)
   }
 
@@ -41,8 +48,30 @@ export class ChatService {
     return observable
   }
 
-  sendSeenMessage(conversationId, author) {
-    this.socket.emit('message_seen', { conversationId: conversationId, author: author })
+  getMessages() {
+    let observable = new Observable(observer => {
+      this.socket.on('new_message', data => {
+        observer.next(data)
+      })
+      return () => {
+        this.socket.disconnect()
+      }
+    })
+    return observable
+  }
+
+  getGroupMessages() {
+    let observable = new Observable(observer => {
+      this.socket.on('new_group_message', data => {
+        observer.next(data)
+      })
+    })
+    return observable;
+  }
+
+
+  sendSeenMessage(author, recipient) {
+    this.socket.emit('message_seen', { recipient: recipient, author: author })
   }
 
   getMessageSeen() {
@@ -112,18 +141,7 @@ export class ChatService {
     return id
   }
 
-  getMessages() {
-    let observable = new Observable(observer => {
-      this.socket.on('new_message', data => {
-        console.log(data)
-        observer.next(data)
-      })
-      return () => {
-        this.socket.disconnect()
-      }
-    })
-    return observable
-  }
+
 
   getChatData() {
     console.log(this.token)

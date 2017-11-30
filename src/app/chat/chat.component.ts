@@ -60,12 +60,22 @@ export class ChatComponent implements OnInit {
 				.isActive = data['isActive']
 		})
 		this.chatService.getMessages().subscribe(message => {
-			if(this.currentChatPartner._id === message['author']._id)
+			if(this.currentChatPartner && this.currentChatPartner._id === message['author']._id)
 				this.chatService.announceMessage(message)
 			else {
 				this.users.find(user => user._id === message['author']._id).unreadMessages++
 			}
 		})
+
+		this.chatService.getGroupMessages().subscribe(message => {
+			if(this.currentChatGroup && this.currentChatGroup._id === message['groupId']) {
+				this.chatService.announceMessage(message)
+			}
+			else {
+
+			}
+		})
+		this.chatService.getNewGroupMessages
 		this.chatService.getNewGroupMessages().subscribe(group => {
 			this.groups.push(group)
 		})

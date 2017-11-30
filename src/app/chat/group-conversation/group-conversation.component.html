@@ -2,5 +2,5 @@
 <mat-sidenav-container>
 	<mat-sidenav mode="side" opened="true" disableClose="true" position="end">
 	</mat-sidenav>
-	<conversation-body [id]="id" [messages]="messagesToDisplay"></conversation-body>
+	<conversation-body [id]="id" [messages]="messagesToDisplay" (onSendMessage)="onSendMessage($event)"></conversation-body>
 </mat-sidenav-container>
