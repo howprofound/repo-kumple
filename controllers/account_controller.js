@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
-
-const Users = require('../models/user')
 const jimp = require('jimp')
 const fs = require('fs')
+
+const Users = require('../models/user')
 
 const sendStatusAndUnlink = (req, res, status = "error") => {
     if(req.file)

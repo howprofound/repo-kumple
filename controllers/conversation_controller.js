@@ -1,5 +1,3 @@
-const mongoose = require('mongoose')
-
 const Messages = require('../models/message')
 const Groups = require('../models/group')
 const GroupMessages = require('../models/group_message')

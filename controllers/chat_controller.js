@@ -6,61 +6,43 @@ const GroupMessages = require('../models/group_message')
 var connectedUsers = []
 
 exports.load_chat_data = (req, res) => {
-    Users.find({_id: { $ne: req.userID }}, 'username _id avatar firstName lastName email bio', (err, users) => {
+    let usersMessageCount = []
+    let groupsMessageCount = []
+    Users.find({ _id: { $ne: req.userID } }, 'username _id avatar firstName lastName email bio').then(users => {
+        usersMessageCount = JSON.parse(JSON.stringify(users))
         let usersCount = []
-        users.forEach((user, index) => {
-            Messages.count({ wasSeen: false, author: user, recipient: req.userID }, (messageErr, count) => {
-                if (messageErr) {
-                    res.send({
-                        status: "error"
-                    })
-                }
-                else {
-                    let cloneUser = JSON.parse(JSON.stringify(user))
-                    cloneUser.unreadMessages = count;
-                    usersCount.push(cloneUser)
-                    if (index === users.length - 1) {
-                        Groups.find({users: req.userID}, (groupsFindErr, groups) => {
-                            if (groupsFindErr) {
-                                res.send({
-                                    status: "error"
-                                })
-                            }
-                            else if(groups.length > 0) {
-                                let groupsCount = []
-                                groups.forEach((group, index) => {
-                                    GroupMessages.count({ groupId: group._id, wasSeenBy: { $ne: req.userID }, author: { $ne: req.userID } }, (groupsMessageErr, count) => {
-                                        if (groupsMessageErr) {
-                                            res.send({
-                                                status: "error"
-                                            })
-                                        }
-                                        else {
-                                            let cloneGroup = JSON.parse(JSON.stringify(group));
-                                            cloneGroup.unreadMessages = count;
-                                            groupsCount.push(cloneGroup)
-                                            if(index === groups.length - 1) {
-                                                res.send({
-                                                    status: "success",
-                                                    users: usersCount,
-                                                    groups: groupsCount
-                                                })
-                                            }
-                                        }    
-                                    })
-                                })
-                            }
-                            else {
-                                res.send({
-                                    status: "success",
-                                    users: usersCount,
-                                    groups: groups
-                                })
-                            }
-                        })
-                    }
-                }
+        users.forEach(user => {
+            usersCount.push(
+                Messages.count({ wasSeen: false, author: user, recipient: req.userID })
+            )
+        })
+        return Promise.all(usersCount)
+    }).then(usersCount => {  
+        Groups.find({ users: req.userID }).then(groups => {
+            groupsMessageCount = JSON.parse(JSON.stringify(groups))
+            let groupsCount = []
+            groups.forEach(group => {
+                groupsCount.push(
+                    GroupMessages.count({ groupId: group._id, wasSeenBy: { $ne: req.userID }, author: { $ne: req.userID } })    
+                )
             })
+            return Promise.all(groupsCount)
+        }).then(groupsCount => {
+            usersMessageCount.forEach((userMessageCount, index) => {
+                userMessageCount.unreadMessages = usersCount[index]
+            })
+            groupsMessageCount.forEach((groupMessageCount, index) => {
+                groupMessageCount.unreadMessages = groupsCount[index]
+            })
+            res.send({
+                status: "success",
+                users: usersMessageCount,
+                groups: groupsMessageCount
+            })
+        })
+    }).catch(err => {
+        res.send({
+            status: "error"
         })
     })
 }

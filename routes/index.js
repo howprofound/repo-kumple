@@ -1,13 +1,9 @@
-const express = require('express')
 const path = require('path')
 const socketioJwt = require('socketio-jwt')
-const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
+const fs = require('fs')
 
 const chat_controller = require('../controllers/chat_controller')
-
-
-const fs = require('fs')
 
 module.exports = (app, db, io) => {
 	app.use(/^\/api\/(?!(login|register)).*$/, (req, res, next) => {

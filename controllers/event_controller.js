@@ -1,5 +1,3 @@
-const mongoose = require('mongoose')
-
 const Events = require('../models/event')
 
 exports.get_events = (req, res) => {
