@@ -24,7 +24,10 @@ export class ConversationBodyComponent implements  AfterViewChecked {
   getMessageStatus(message) {
 		if(message.wasSeen) {
 			return "Seen"
-		}
+    }
+    else if(message.wasSeenBy.length > 1) {
+      return "Seen by " + (message.wasSeenBy.length - 1) + " person"
+    }
 		else if(message.wasDelivered) {
 			return "Delivered"
 		}

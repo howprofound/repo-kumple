@@ -74,14 +74,27 @@ export class ChatService {
     this.socket.emit('message_seen', { recipient: recipient, author: author })
   }
 
+  sendSeenGroupMessage(groupId) {
+    this.socket.emit('group_message_seen', {
+      groupId: groupId,
+      userId: this.jwtHelper.decodeToken(this.token).id
+    })
+  }
+
   getMessageSeen() {
     let observable = new Observable(observer => {
       this.socket.on('message_seen', data => {
         observer.next(data)
       })
-      return () => {
-        this.socket.disconnect()
-      }
+    })
+    return observable
+  }
+
+  getGroupMessageSeen() {
+    let observable = new Observable(observer => {
+      this.socket.on('group_message_seen', data => {
+        observer.next(data)
+      })
     })
     return observable
   }
@@ -107,9 +120,6 @@ export class ChatService {
       this.socket.on('user_change', data => {
         observer.next(data)
       })
-      return () => {
-        this.socket.disconnect()
-      }
     })
     return observable
   }
@@ -119,10 +129,6 @@ export class ChatService {
       this.socket.on('connected_users', users => {
         observer.next(users)
       })
-      return () => {
-        console.log("test")
-        this.socket.off('connected_users')
-      }
     })
     return observable
   }

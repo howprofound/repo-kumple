@@ -14,6 +14,7 @@ export class GroupConversationComponent implements OnInit {
   messages: Array<any> = [];
   messagesToDisplay: Array<any> = [];
   messageStream;
+  isLoading: boolean;
 
   constructor(private chatService: ChatService) { }
 
@@ -35,6 +36,7 @@ export class GroupConversationComponent implements OnInit {
 	}
 
   getHistory() {
+    this.isLoading = true
     this.chatService.getGroupHistory(this.group._id).subscribe(history => {
       this.messages = history['messages'].sort((a,b) => {
 				a = new Date(a.date)
@@ -42,6 +44,8 @@ export class GroupConversationComponent implements OnInit {
     			return a < b ? -1 : a > b ? 1 : 0
       })
       this.groupMessagesToDisplay()
+      this.chatService.sendSeenGroupMessage(this.group._id)
+      this.isLoading = false
     })
   }
   getMessageAck(id) {
@@ -64,7 +68,7 @@ export class GroupConversationComponent implements OnInit {
 				_id: this.id,
 				username: this.username
 			},
-			wasSeen: false,
+			wasSeenBy: [],
 			date: Date.now()
     })
     this.addNewMessageToDisplay(this.messages[this.messages.length - 1])
@@ -74,6 +78,14 @@ export class GroupConversationComponent implements OnInit {
     this.messageStream = this.chatService.messageAnnounced.subscribe(message => {
       this.messages.push(message)
       this.addNewMessageToDisplay(message)
+      this.chatService.sendSeenGroupMessage(this.group._id)
     })
+    this.chatService.getGroupMessageSeen().subscribe(data => {
+      if(this.group._id === data['groupId']) {
+        this.messages.forEach(message => {
+          message.wasSeenBy.push(data['userId'])
+        }) 
+      }
+		})
   }
 }

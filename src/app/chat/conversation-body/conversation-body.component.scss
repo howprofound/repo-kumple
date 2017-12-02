@@ -1,54 +1,58 @@
-.conversation-container {
-    height: calc(100% - 20px);
-    .conversation-body { 
-        height: calc(100% - 30px);
-        overflow-y: scroll;
-        overflow-x: hidden;
+.conversation-body { 
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.no-message-info {
+    margin-top: 30px;
+    color: lightgrey;
+    font-family: Helvetica;
+    font-size: 18px;
+}
+.conversation-input {
+    display: flex;
+    height: 30px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    input {
+        flex: 0 1 100%;
+        padding-left: 8px;
     }
-    .conversation-input {
-        display: flex;
-        height: 30px;
-        padding: 10px;
-        background-color: #f5f5f5;
-        input {
-            flex: 0 1 100%;
-            padding-left: 8px;
-        }
+}
+.message-list {
+    text-align: left;
+    padding: 8px 18px;
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    &.mine {
+        background-color: rgba(63, 81, 181, 0.1);
     }
-    .message-list {
-        text-align: left;
-        padding: 8px 18px;
-        font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: baseline;
-        &.mine {
-            background-color: rgba(63, 81, 181, 0.1);
-        }
-        border-collapse: collapse;
-        border-bottom: 1px solid lightgrey;
-        border-bottom: 1px solid lightgrey;
-        .message-author {
-            font-size: 18px;
-            color: grey;
-            font-weight: bold;
-        }
-        .message-list-date {
-            margin-left: 10px;
-            font-size: 12px;
-            color: grey;
-        }
-        .message-container {
-            padding-left: 10px;
-            font-size: 14px;
-            flex: 0 0 100%;
-        }
-        .message-status {
-            text-align: right;
-            font-size: 12px;
-            color: grey;
-            flex: 1 1 auto;
-        }
+    border-collapse: collapse;
+    border-bottom: 1px solid lightgrey;
+    border-bottom: 1px solid lightgrey;
+    .message-author {
+        font-size: 18px;
+        color: grey;
+        font-weight: bold;
+    }
+    .message-list-date {
+        margin-left: 10px;
+        font-size: 12px;
+        color: grey;
+    }
+    .message-container {
+        padding-left: 10px;
+        font-size: 14px;
+        flex: 0 0 100%;
+    }
+    .message-status {
+        text-align: right;
+        font-size: 12px;
+        color: grey;
+        flex: 1 1 auto;
     }
 }
 

@@ -16,9 +16,11 @@ export class ConversationComponent implements OnInit, OnChanges {
 	messagesToDisplay = [];
 	messageStream;
 	isInitialized: boolean = false;
+	isLoading: boolean;
 	constructor(private chatService: ChatService) { }
 
 	getHistory() {
+		this.isLoading = true;
 		this.chatService.getHistory(this.convPartner._id).subscribe(history => {
 			this.messages = history['messages'].sort((a,b) => {
 				a = new Date(a.date)
@@ -27,6 +29,7 @@ export class ConversationComponent implements OnInit, OnChanges {
 			})
 			this.groupMessagesToDisplay()
 			this.chatService.sendSeenMessage(this.convPartner._id, this.id)
+			this.isLoading = false;
 		})
 	}
 
@@ -55,9 +58,11 @@ export class ConversationComponent implements OnInit, OnChanges {
 			this.chatService.sendSeenMessage(this.convPartner._id, this.id)
 		})
 		this.chatService.getMessageSeen().subscribe(id => {
-			this.messages.forEach(message => {
-				message.wasSeen = true
-			}) 
+			if(id === this.convPartner._id) {
+				this.messages.forEach(message => {
+					message.wasSeen = true
+				}) 
+			}
 		})
 		this.isInitialized = true
 	}

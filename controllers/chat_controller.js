@@ -178,7 +178,7 @@ exports.group_message_seen = (data, socket) => {
         }
         else {
             for (i in connectedUsers) {
-                if(connectedUsers[i].groups.includes(data.groupId) && connectedUsers[i].id !== data.userId){
+                if(connectedUsers[i].groups.includes(data.groupId)){
                     socket.broadcast.to(connectedUsers.socketId).emit("group_message_seen", {
                         groupId: data.groupId,
                         userId: data.userId
