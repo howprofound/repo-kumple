@@ -32,7 +32,7 @@ export class GroupConversationComponent implements OnInit {
 		}
 		else {
 			this.messagesToDisplay[this.messagesToDisplay.length - 1].push(message)
-		}
+    }
 	}
 
   getHistory() {
@@ -49,7 +49,6 @@ export class GroupConversationComponent implements OnInit {
     })
   }
   getMessageAck(id) {
-    console.log(id)
     this.messages = this.messages.map(message => {
 			if(!message._id) {
 				return Object.assign(message, { wasDelivered: true, _id: id })
@@ -68,7 +67,8 @@ export class GroupConversationComponent implements OnInit {
 				_id: this.id,
 				username: this.username
 			},
-			wasSeenBy: [],
+      wasSeenBy: [this.id],
+      groupId: this.group._id,
 			date: Date.now()
     })
     this.addNewMessageToDisplay(this.messages[this.messages.length - 1])
@@ -83,7 +83,9 @@ export class GroupConversationComponent implements OnInit {
     this.chatService.getGroupMessageSeen().subscribe(data => {
       if(this.group._id === data['groupId']) {
         this.messages.forEach(message => {
-          message.wasSeenBy.push(data['userId'])
+          if(!message.wasSeenBy.includes(data['userId'])) {
+            message.wasSeenBy.push(data['userId'])
+          }
         }) 
       }
 		})

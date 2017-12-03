@@ -96,7 +96,6 @@ exports.new_message = (message, ack, socket) => {
                 }    
                 else {
                     let target = connectedUsers.find(user => user.id === message.recipient)
-                    console.log(target)
                     if (target) {
                         socket.broadcast.to(target.socketId).emit("new_message", messageInstance)
                     }
@@ -141,7 +140,7 @@ exports.new_group_message = (message, ack, socket) => {
                 else {
                     for (i in connectedUsers) {
                         if(connectedUsers[i].groups.includes(message.groupId) && connectedUsers[i].id !== message.author){
-                            socket.broadcast.to(connectedUsers.socketId).emit("new_group_message", messageInstance)
+                            socket.broadcast.to(connectedUsers[i].socketId).emit("new_group_message", messageInstance)
                         }
                     }
                     ack(messageInstance._id)
@@ -160,8 +159,8 @@ exports.group_message_seen = (data, socket) => {
         }
         else {
             for (i in connectedUsers) {
-                if(connectedUsers[i].groups.includes(data.groupId)){
-                    socket.broadcast.to(connectedUsers.socketId).emit("group_message_seen", {
+                if(connectedUsers[i].groups.includes(data.groupId)) {
+                    socket.broadcast.to(connectedUsers[i].socketId).emit("group_message_seen", {
                         groupId: data.groupId,
                         userId: data.userId
                     })

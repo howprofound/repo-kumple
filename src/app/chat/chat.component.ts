@@ -73,7 +73,7 @@ export class ChatComponent implements OnInit {
 				this.chatService.announceMessage(message)
 			}
 			else {
-
+				this.groups.find(group => group._id === message['groupId']).unreadMessages++
 			}
 		})
 		this.chatService.getNewGroupMessages
@@ -130,6 +130,7 @@ export class ChatComponent implements OnInit {
 				if(data['status'] === 'success') {
 					this.authService.username = data['username']
 					this.username = this.authService.username
+					this.avatar = data['avatar']
 				}
 			})
 		}
@@ -143,7 +144,7 @@ export class ChatComponent implements OnInit {
 				return Object.assign(user, { isActive: false })
 			})
 			this.groups = data['groups']
-			this.id = this.chatService.connect(this.groups)
+			this.id = this.chatService.connect(this.groups.map(group => group._id))
 			this.chatService.getActiveUsers().subscribe(activeUsers => this.onConnect(activeUsers))
 		})
 	}

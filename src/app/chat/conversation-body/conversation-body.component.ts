@@ -25,8 +25,14 @@ export class ConversationBodyComponent implements  AfterViewChecked {
 		if(message.wasSeen) {
 			return "Seen"
     }
-    else if(message.wasSeenBy.length > 1) {
-      return "Seen by " + (message.wasSeenBy.length - 1) + " person"
+    else if(message.wasSeenBy && message.wasSeenBy.length > 1) {
+      let status = "Seen by " + (message.wasSeenBy.length - 1)
+      if(message.wasSeenBy.length === 2) {
+        return status + " person"
+      }
+      else {
+        return status + " people"
+      }
     }
 		else if(message.wasDelivered) {
 			return "Delivered"
