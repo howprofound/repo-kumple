@@ -126,7 +126,7 @@ exports.new_group_message = (message, ack, socket) => {
         content: message.content,
         author: message.author,
         wasDelivered: true,
-        wasSeenBy: [],
+        wasSeenBy: [message.author],
         groupId: message.groupId
 
     }, (err, messageInstance) => {
@@ -153,7 +153,7 @@ exports.new_group_message = (message, ack, socket) => {
 }
 
 exports.group_message_seen = (data, socket) => {
-    GroupMessages.update({ groupId: data.groupId },
+    GroupMessages.update({ groupId: data.groupId, wasSeenBy: { $ne: data.userId } },
         { $addToSet: { wasSeenBy: data.userId } }, { multi: true }, (err, messages) => {
         if(err) {
             console.log("error")
