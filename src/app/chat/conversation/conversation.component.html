@@ -15,6 +15,6 @@
 	</mat-sidenav>
 	<div class="conversation-container">
 		<mat-spinner *ngIf="isLoading" [diameter]="150"></mat-spinner>
-		<conversation-body *ngIf="!isLoading" [id]="id" [messages]="messagesToDisplay" (onSendMessage)="onSendMessage($event)"></conversation-body>
+		<conversation-body *ngIf="!isLoading" [id]="id" [messages]="messages" (onSendMessage)="onSendMessage($event)"></conversation-body>
 	</div>
 </mat-sidenav-container>

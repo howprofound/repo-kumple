@@ -1,0 +1,21 @@
+<mat-toolbar color="primary" >
+		<span>Awesome Calendar</span>
+        <span class="toolbar-spacer"></span>
+</mat-toolbar>
+
+<mat-sidenav-container>
+  <mat-sidenav mode="side" disableClose="true" opened="true">
+      <owl-date-time inline="true" type="calendar" (onSelect)="onDateSelect($event)">
+      </owl-date-time>
+  </mat-sidenav>
+  <mat-toolbar>
+        <span class="toolbar-spacer"></span>
+        <button mat-raised-button color="primary" (click)="onNewEventClick()">
+            Add event
+            <mat-icon>add</mat-icon>
+        </button>
+  </mat-toolbar>
+  <div class="main-content">
+    <ng-fullcalendar #calendar [options]="calendarOptions"></ng-fullcalendar>
+  </div>
+</mat-sidenav-container>

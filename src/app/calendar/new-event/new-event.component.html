@@ -1,0 +1,24 @@
+<h1 mat-dialog-title>Create new event</h1>
+<mat-dialog-content>
+    <mat-form-field>
+      <input matInput placeholder="Event name"  autofocus required  [(ngModel)]="title">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Place" [(ngModel)]="place">
+    </mat-form-field>
+    <mat-form-field class="date-input">
+      <input matInput type="datetime-local" placeholder="Start date" [(ngModel)]="startDate">
+    </mat-form-field>
+    <mat-form-field class="date-input">
+        <input matInput type="datetime-local" placeholder="End date" [(ngModel)]="endDate">
+    </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+	<span class="spacer"></span>
+  	<button mat-raised-button color="primary" [mat-dialog-close]>
+  		<mat-icon>add</mat-icon> Create
+  	</button>
+  	<button mat-raised-button color="accent" mat-dialog-close>
+  		<mat-icon>cancel</mat-icon> Cancel
+  	</button>
+</mat-dialog-actions>

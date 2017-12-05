@@ -28,6 +28,7 @@ import { ChatComponent } from './chat.component'
 import { GroupConversationComponent } from './group-conversation/group-conversation.component';
 import { ChatSidenavComponent } from './chat-sidenav/chat-sidenav.component';
 import { ConversationBodyComponent } from './conversation-body/conversation-body.component';
+import { FormatMessagesPipe } from './format-messages.pipe';
 
 
 const ROUTES = [
@@ -69,6 +70,7 @@ const ROUTES = [
     GroupConversationComponent,
     ChatSidenavComponent,
     ConversationBodyComponent,
+    FormatMessagesPipe,
   ],
   providers: [
     ChatService,

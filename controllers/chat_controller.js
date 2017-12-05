@@ -67,6 +67,9 @@ exports.chat_disconnection = socket => {
             return false
         }
     })
+    if(!dcUser) {
+        console.log(dcUser)
+    }
     socket.broadcast.emit('user_change', {id: dcUser, isActive: false})
     Users.findOneAndUpdate({
         _id: dcUser

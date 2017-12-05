@@ -18,23 +18,6 @@ export class GroupConversationComponent implements OnInit {
 
   constructor(private chatService: ChatService) { }
 
-  groupMessagesToDisplay() {
-		this.messagesToDisplay = []
-		this.messages.forEach(message => {
-			message.date = new Date(message.date)
-			this.addNewMessageToDisplay(message)
-		})
-  }
-  
-  addNewMessageToDisplay(message) {
-		if(this.messagesToDisplay.length === 0 || this.messagesToDisplay[this.messagesToDisplay.length - 1][0].author._id !== message.author._id) {
-			this.messagesToDisplay.push([message])
-		}
-		else {
-			this.messagesToDisplay[this.messagesToDisplay.length - 1].push(message)
-    }
-	}
-
   getHistory() {
     this.isLoading = true
     this.chatService.getGroupHistory(this.group._id).subscribe(history => {
@@ -43,7 +26,6 @@ export class GroupConversationComponent implements OnInit {
     			b = new Date(b.date)
     			return a < b ? -1 : a > b ? 1 : 0
       })
-      this.groupMessagesToDisplay()
       this.chatService.sendSeenGroupMessage(this.group._id)
       this.isLoading = false
     })
@@ -71,13 +53,11 @@ export class GroupConversationComponent implements OnInit {
       groupId: this.group._id,
 			date: Date.now()
     })
-    this.addNewMessageToDisplay(this.messages[this.messages.length - 1])
   }
   ngOnInit() {
     this.getHistory()
     this.messageStream = this.chatService.messageAnnounced.subscribe(message => {
       this.messages.push(message)
-      this.addNewMessageToDisplay(message)
       this.chatService.sendSeenGroupMessage(this.group._id)
     })
     this.chatService.getGroupMessageSeen().subscribe(data => {

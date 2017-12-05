@@ -2,9 +2,9 @@
 	<div *ngIf="messages.length === 0" class="no-message-info">
 		No messages. Type something and start a conversation
 	</div>
-	<div class="message-list" *ngFor="let messagesList of messages"  [class.mine]="messagesList[0].author._id === id">
+	<div class="message-list" *ngFor="let messagesList of (messages | formatMessages)"  [class.mine]="messagesList[0].author._id === id">
 		<span class="message-author">{{messagesList[0].author.username}}</span> 
-		<span class="message-list-date">{{messagesList[0].date.toLocaleString()}}</span>
+		<span class="message-list-date">{{messagesList[0].date | date:'shortTime'}}</span>
 		<span class="message-status" *ngIf="messagesList[0].author._id === id">
 			{{getMessageStatus(messagesList[messagesList.length-1])}}
 		</span>

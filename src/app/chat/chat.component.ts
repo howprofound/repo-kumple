@@ -2,7 +2,7 @@ import { Component, OnInit, HostBinding, Inject } from '@angular/core'
 import { ChatService } from '../chat.service'
 import { AuthService } from '../auth.service'
 import { trigger, style, animate, transition, keyframes, state } from '@angular/animations'
-import { MatDialog, MatSidenav } from '@angular/material'
+import { MatDialog } from '@angular/material'
 import { NewGroupComponent } from "./new-group/new-group.component"
 
 
@@ -130,7 +130,6 @@ export class ChatComponent implements OnInit {
 				if(data['status'] === 'success') {
 					this.authService.username = data['username']
 					this.username = this.authService.username
-					this.avatar = data['avatar']
 				}
 			})
 		}

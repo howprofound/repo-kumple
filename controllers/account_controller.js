@@ -110,7 +110,7 @@ exports.user_login = (req, res) => {
 }
 
 exports.get_user = (req, res) => {
-    Users.findOne({ _id: req.userID }, 'username _id', (error, user) => {
+    Users.findOne({ _id: req.userID }, 'username _id avatar', (error, user) => {
         if(error) {
             res.send({
                 status: "error"
@@ -119,7 +119,8 @@ exports.get_user = (req, res) => {
         else {
             res.send({
                 status: "success",
-                username: user.username
+                username: user.username,
+                user: user
             })
         }
     })

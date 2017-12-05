@@ -27,34 +27,16 @@ export class ConversationComponent implements OnInit, OnChanges {
     			b = new Date(b.date)
     			return a < b ? -1 : a > b ? 1 : 0
 			})
-			this.groupMessagesToDisplay()
 			this.chatService.sendSeenMessage(this.convPartner._id, this.id)
 			this.isLoading = false;
 		})
 	}
 
-	groupMessagesToDisplay() {
-		this.messagesToDisplay = []
-		this.messages.forEach(message => {
-			message.date = new Date(message.date)
-			this.addNewMessageToDisplay(message)
-		})
-	}
-
-	addNewMessageToDisplay(message) {
-		if(this.messagesToDisplay.length === 0 || this.messagesToDisplay[this.messagesToDisplay.length - 1][0].author._id !== message.author._id) {
-			this.messagesToDisplay.push([message])
-		}
-		else {
-			this.messagesToDisplay[this.messagesToDisplay.length - 1].push(message)
-		}
-	}
 
 	ngOnInit() {
 		this.getHistory()
 		this.messageStream = this.chatService.messageAnnounced.subscribe(message => {
 			this.messages.push(message)
-			this.addNewMessageToDisplay(message)
 			this.chatService.sendSeenMessage(this.convPartner._id, this.id)
 		})
 		this.chatService.getMessageSeen().subscribe(id => {
@@ -100,7 +82,6 @@ export class ConversationComponent implements OnInit, OnChanges {
 			wasSeen: false,
 			date: Date.now()
 		})
-		this.addNewMessageToDisplay(this.messages[this.messages.length - 1])
 	}
 	ngOnDestroy() {
 		this.messageStream.unsubscribe()
