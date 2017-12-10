@@ -5,6 +5,7 @@ import { CalendarService } from './calendar.service'
 import { MatDialog } from '@angular/material'
 import { NewEventComponent } from "./new-event/new-event.component"
 import { ActivatedRoute } from '@angular/router';
+import { ChatService } from '../chat.service';
 
 @Component({
   selector: 'calendar',
@@ -18,10 +19,11 @@ export class CalendarAppComponent implements OnInit{
   calendarOptions: Options
   events: Array<any> = []
   users: Array<any> = []
-  refreshCalendar: boolean = false
   isLoading: boolean = true;
+  newChatMessage: boolean = false;
   @ViewChild(CalendarComponent) calendar: CalendarComponent;
-  constructor(private calendarService: CalendarService, public dialog: MatDialog, private route: ActivatedRoute) { }
+  constructor(private calendarService: CalendarService, public dialog: MatDialog, 
+    private route: ActivatedRoute, private chatService: ChatService) { }
 
   ngOnInit() { 
     this.route.data.subscribe((data: { user: any }) => {
@@ -50,6 +52,11 @@ export class CalendarAppComponent implements OnInit{
         this.events.forEach(event => this.addEventToCalendar(event))
         this.isLoading = false
       }
+    })
+    this.chatService.connect()
+    this.chatService.joinCalendar()
+    this.chatService.getMessages().subscribe(message => {
+      this.newChatMessage = true;
     })
   }
   addEventToCalendar(event) {

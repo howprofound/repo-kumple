@@ -3,7 +3,7 @@ const Messages = require('../models/message')
 const Groups = require('../models/group')
 const GroupMessages = require('../models/group_message')
 
-var connectedUsers = []
+var connectedUsers = require('../config/shared')
 
 exports.load_chat_data = (req, res) => {
     let usersMessageCount = []
@@ -29,7 +29,9 @@ exports.load_chat_data = (req, res) => {
             return Promise.all(groupsCount)
         }).then(groupsCount => {
             usersMessageCount.forEach((userMessageCount, index) => {
+                console.log(userMessageCount, usersCount[index])
                 userMessageCount.unreadMessages = usersCount[index]
+                console.log(userMessageCount)
             })
             groupsMessageCount.forEach((groupMessageCount, index) => {
                 groupMessageCount.unreadMessages = groupsCount[index]
@@ -49,15 +51,21 @@ exports.load_chat_data = (req, res) => {
 
 exports.chat_connection = (userData, socket) => {
     socket.emit('connected_users', connectedUsers)
-    connectedUsers.push({
-        id: userData.id,
-        socketId: socket.id,
-        groups: userData.groups
-    })
+    let user = connectedUsers.find(cUser => cUser.id === userData.id)
+    if(!user) {
+        connectedUsers.push({
+            id: userData.id,
+            socketId: socket.id,
+            groups: userData.groups
+        })
+    }
+    else {
+        user.groups = userData.groups
+    }
     socket.broadcast.emit('user_change', {id: userData.id, isActive: true})
 }
 
-exports.chat_disconnection = socket => {
+exports.chat_disconnection = (socket) => {
     let dcUser
     connectedUsers = connectedUsers.filter(user => {
         if(user.socketId !== socket.id)
@@ -67,9 +75,6 @@ exports.chat_disconnection = socket => {
             return false
         }
     })
-    if(!dcUser) {
-        console.log(dcUser)
-    }
     socket.broadcast.emit('user_change', {id: dcUser, isActive: false})
     Users.findOneAndUpdate({
         _id: dcUser
@@ -98,8 +103,10 @@ exports.new_message = (message, ack, socket) => {
                     console.log(populateErr)
                 }    
                 else {
+                    console.log(connectedUsers)
                     let target = connectedUsers.find(user => user.id === message.recipient)
                     if (target) {
+                        console.log(target)
                         socket.broadcast.to(target.socketId).emit("new_message", messageInstance)
                     }
                     ack(messageInstance._id)
@@ -246,4 +253,15 @@ exports.group_conversation_remove = (data, socket) => {
             }
         }
     })
+}
+
+exports.calendar_connection = ( userId, socket) => {
+    let user = connectedUsers.find(cUser => cUser.id === userId)
+    if(!user) {
+        connectedUsers.push({
+            id: userId,
+            socketId: socket.id,
+            groups: []
+        })
+    }
 }

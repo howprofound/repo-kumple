@@ -66,7 +66,7 @@ const ROUTES = [
     MatInputModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule,
+    MatSnackBarModule
   ],
   providers: [
     AuthService,

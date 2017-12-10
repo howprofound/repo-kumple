@@ -28,10 +28,8 @@ import { ChatComponent } from './chat.component'
 import { GroupConversationComponent } from './group-conversation/group-conversation.component';
 import { ChatSidenavComponent } from './chat-sidenav/chat-sidenav.component';
 import { ConversationBodyComponent } from './conversation-body/conversation-body.component';
-import { FormatMessagesPipe } from './format-messages.pipe';
 import { UserResolverService } from '../user-resolver.service'
-
-
+import { SharedModule } from '../shared/shared.module'
 const ROUTES = [
   {
     path: 'chat',
@@ -62,7 +60,8 @@ const ROUTES = [
     MatSidenavModule,
     MatToolbarModule,
     MatChipsModule,
-    MatDialogModule
+    MatDialogModule,
+    SharedModule
   ],
   entryComponents: [
     NewGroupComponent
@@ -73,8 +72,7 @@ const ROUTES = [
     NewGroupComponent,
     GroupConversationComponent,
     ChatSidenavComponent,
-    ConversationBodyComponent,
-    FormatMessagesPipe,
+    ConversationBodyComponent
   ],
   providers: [
     ChatService,

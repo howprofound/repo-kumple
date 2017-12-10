@@ -4,7 +4,7 @@ import { AuthService } from '../auth.service'
 import { trigger, style, animate, transition, keyframes, state } from '@angular/animations'
 import { MatDialog } from '@angular/material'
 import { NewGroupComponent } from "./new-group/new-group.component"
-
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
 	selector: 'app-chat',
@@ -33,9 +33,8 @@ import { NewGroupComponent } from "./new-group/new-group.component"
 
 
 export class ChatComponent implements OnInit {
-	id: string
+	user;
 	users: Array<any> = []
-	userStream
 	messageStream
 	username: string
 	groups: Array<any> = []
@@ -44,7 +43,7 @@ export class ChatComponent implements OnInit {
 	currentChatPartner;
 	currentChatGroup;
 	currentChatUsers: Array<any>;
-	constructor(private chatService: ChatService, private authService: AuthService, public dialog: MatDialog) { }
+	constructor(private chatService: ChatService, private authService: AuthService, public dialog: MatDialog, private route: ActivatedRoute) { }
 	onConnect(activeUsers) {
 		this.users = this.users.map(user => {
 			if(activeUsers.find(activeUser => activeUser.id === user._id)) {
@@ -54,15 +53,16 @@ export class ChatComponent implements OnInit {
 				return Object.assign(user, { unreadMessages: 0 })
 			}
 		})
-		this.userStream = this.chatService.monitorUsers().subscribe(data => {
-			console.log(data, this.id)
+		this.chatService.monitorUsers().subscribe(data => {
 			this.users
 				.find(user => user._id === data['id'])
 				.isActive = data['isActive']
 		})
-		this.chatService.getMessages().subscribe(message => {
-			if(this.currentChatPartner && this.currentChatPartner._id === message['author']._id)
+				
+		this.messageStream = this.chatService.getMessages().subscribe(message => {
+			if(this.currentChatPartner && this.currentChatPartner._id === message['author']._id) {
 				this.chatService.announceMessage(message)
+			}
 			else {
 				this.users.find(user => user._id === message['author']._id).unreadMessages++
 			}
@@ -76,7 +76,6 @@ export class ChatComponent implements OnInit {
 				this.groups.find(group => group._id === message['groupId']).unreadMessages++
 			}
 		})
-		this.chatService.getNewGroupMessages
 		this.chatService.getNewGroupMessages().subscribe(group => {
 			this.groups.push(group)
 		})
@@ -111,7 +110,7 @@ export class ChatComponent implements OnInit {
 					title: data.title,
 					users: data.selectedUsers
 				}
-				dataToSend.users.push(this.id)
+				dataToSend.users.push(this.user._id)
 				this.chatService.sendNewGroupMessage(dataToSend, this.getNewGroupAck.bind(this))
 			}
 		})
@@ -122,6 +121,9 @@ export class ChatComponent implements OnInit {
 	}
 
 	ngOnInit() {
+		this.route.data.subscribe((data: { user: any }) => {
+			this.user = data.user
+		})
 		this.activeView = 'loading'
 		this.isLoading = true
 		if(!this.authService.username) {
@@ -142,11 +144,12 @@ export class ChatComponent implements OnInit {
 				return Object.assign(user, { isActive: false })
 			})
 			this.groups = data['groups']
-			this.id = this.chatService.connect(this.groups.map(group => group._id))
+			this.chatService.connect()
+			this.chatService.joinChat(this.groups.map(group => group._id))
 			this.chatService.getActiveUsers().subscribe(activeUsers => this.onConnect(activeUsers))
 		})
 	}
 	ngOnDestroy() {
-		this.userStream.unsubscribe()
+		this.messageStream.unsubscribe()
 	}
 }

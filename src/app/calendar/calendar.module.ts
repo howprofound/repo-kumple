@@ -11,6 +11,7 @@ import { CalendarAppComponent } from './calendar.component'
 import { DateTimePickerModule } from 'ng-pick-datetime'
 import { FullCalendarModule } from 'ng-fullcalendar'
 import { CalendarService } from './calendar.service'
+import { ChatService } from '../chat.service'
 import { 
   MatSidenavModule,
   MatToolbarModule,
@@ -22,7 +23,7 @@ import {
 } from '@angular/material';
 import { NewEventComponent } from './new-event/new-event.component';
 import { UserResolverService } from '../user-resolver.service'
-import { AppToolbarComponent } from '../app-toolbar/app-toolbar.component';
+import { SharedModule } from '../shared/shared.module'
 const ROUTES = [
   {
     path: 'calendar',
@@ -51,21 +52,22 @@ const ROUTES = [
     MatIconModule,
     MatButtonModule,
     MatDialogModule,
-    MatListModule
+    MatListModule,
+    SharedModule
   ],
   entryComponents: [
     NewEventComponent
   ],
   declarations: [
     CalendarAppComponent,
-    NewEventComponent,
-    AppToolbarComponent
+    NewEventComponent
   ],
   providers: [
     AuthService,
     AuthGuardService,
     CalendarService,
-    UserResolverService
+    UserResolverService,
+    ChatService
   ],
   
 })

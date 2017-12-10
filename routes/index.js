@@ -37,7 +37,8 @@ module.exports = (app, db, io) => {
 	}))
 
 	io.on('connection', socket => {
-		socket.on("join", userData => chat_controller.chat_connection(userData, socket))
+		socket.on("join_calendar", userId => chat_controller.calendar_connection(userId, socket))
+		socket.on("join_chat", userData => chat_controller.chat_connection(userData, socket))
 		socket.on("disconnect", () => chat_controller.chat_disconnection(socket))
 		socket.on("new_message", (message, ack) => chat_controller.new_message(message, ack, socket))
 		socket.on("message_seen", data => chat_controller.message_seen(data, socket))

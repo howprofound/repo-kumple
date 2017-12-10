@@ -8,6 +8,7 @@ import { Component, OnInit, Input } from '@angular/core';
 export class AppToolbarComponent implements OnInit {
   @Input () text: string;
   @Input () user;
+  @Input () newChatMessage: boolean;
   constructor() { }
 
   ngOnInit() {

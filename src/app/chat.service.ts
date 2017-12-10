@@ -133,21 +133,24 @@ export class ChatService {
     return observable
   }
 
-  connect(groups) {
-  	this.socket = io.connect('', {
-      query: 'token=' + this.token
-    })
-    let id = this.jwtHelper.decodeToken(this.token).id
-    this.socket.on('connect', () => {
-      this.socket.emit('join', {
-        id: id,
-        groups: groups
+  connect() {
+    if(!this.socket || !this.socket.connected) {
+      this.socket = io.connect('', {
+        query: 'token=' + this.token
       })
-    })
-    return id
+    }
   }
 
+  joinChat(groups) {
+    this.socket.emit('join_chat', {
+      id: this.jwtHelper.decodeToken(this.token).id,
+      groups: groups
+    })
+  }
 
+  joinCalendar() { 
+    this.socket.emit('join_calendar', this.jwtHelper.decodeToken(this.token).id)
+  }
 
   getChatData() {
     console.log(this.token)

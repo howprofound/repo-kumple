@@ -1,5 +1,8 @@
 const Events = require('../models/event')
 const Users = require('../models/user')
+const io = require('socket.io')
+
+var connectedUsers = 
 exports.get_events = (req, res) => {
     Events.find({ users: req.userID }, (error, events) => {
         if(error) {
