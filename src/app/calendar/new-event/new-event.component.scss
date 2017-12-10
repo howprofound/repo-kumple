@@ -11,6 +11,9 @@
     &.date-input {
         flex: 0 0 45%;
     }
+    textarea {
+        resize: none;
+    }
 }
 owl-date-time {
     display: flex;
@@ -20,5 +23,9 @@ owl-date-time {
 .mat-dialog-actions {
 	display: flex;
 	justify-content: flex-end;
+}
+
+.list-username {
+	color: lightgrey;
 }
 

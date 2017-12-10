@@ -1,21 +1,28 @@
 <h1 mat-dialog-title>Create new event</h1>
 <mat-dialog-content>
     <mat-form-field>
-      <input matInput placeholder="Event name"  autofocus required  [(ngModel)]="title">
+      <input matInput placeholder="Event name"  autofocus required  [(ngModel)]="returnData.title">
     </mat-form-field>
     <mat-form-field>
-      <input matInput placeholder="Place" [(ngModel)]="place">
+      <input matInput placeholder="Place" [(ngModel)]="returnData.place">
     </mat-form-field>
     <mat-form-field class="date-input">
-      <input matInput type="datetime-local" placeholder="Start date" [(ngModel)]="startDate">
+      <input matInput type="datetime-local" placeholder="Start date" [(ngModel)]="returnData.startDate">
     </mat-form-field>
     <mat-form-field class="date-input">
-        <input matInput type="datetime-local" placeholder="End date" [(ngModel)]="endDate">
+        <input matInput type="datetime-local" placeholder="End date" [(ngModel)]="returnData.endDate">
     </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <textarea matInput placeholder="Description" [(ngModel)]="returnData.description" rows="5"></textarea>
+    </mat-form-field>
+    <mat-selection-list>
+      <mat-list-option *ngFor="let user of data.users" (click)="onUserSelect(user)">
+        {{user.firstName}} {{user.lastName}} <span class="list-username">(@{{user.username}})</span>
+      </mat-list-option>
+    </mat-selection-list>
 </mat-dialog-content>
 <mat-dialog-actions>
-	<span class="spacer"></span>
-  	<button mat-raised-button color="primary" [mat-dialog-close]>
+  	<button mat-raised-button color="primary" [mat-dialog-close]="returnData">
   		<mat-icon>add</mat-icon> Create
   	</button>
   	<button mat-raised-button color="accent" mat-dialog-close>

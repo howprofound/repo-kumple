@@ -18,17 +18,20 @@ import {
   MatIconModule,
   MatButtonModule,
   MatDialogModule,
-  MatDatepickerModule
+  MatListModule
 } from '@angular/material';
 import { NewEventComponent } from './new-event/new-event.component';
-
-
+import { UserResolverService } from '../user-resolver.service'
+import { AppToolbarComponent } from '../app-toolbar/app-toolbar.component';
 const ROUTES = [
   {
     path: 'calendar',
     component: CalendarAppComponent,
     pathMach: "full",
-    canActivate: [AuthGuardService]
+    canActivate: [AuthGuardService],
+    resolve: {
+      user: UserResolverService
+    }
   },
 ];
 
@@ -48,19 +51,21 @@ const ROUTES = [
     MatIconModule,
     MatButtonModule,
     MatDialogModule,
-    MatDatepickerModule
+    MatListModule
   ],
   entryComponents: [
     NewEventComponent
   ],
   declarations: [
     CalendarAppComponent,
-    NewEventComponent
+    NewEventComponent,
+    AppToolbarComponent
   ],
   providers: [
     AuthService,
     AuthGuardService,
-    CalendarService
+    CalendarService,
+    UserResolverService
   ],
   
 })

@@ -7,12 +7,14 @@ export class CalendarService {
   constructor(private http: HttpClient) { 
     this.token = localStorage.getItem('token')
   }
-  getChatData(event) {
-    console.log(this.token, {
+
+  getCalendarData() {
+    return this.http.get('/api/calendar', {
       headers: new HttpHeaders().set('Authorization', this.token)
     })
   }
-  createEvent() {
+
+  createEvent(event) {
     return this.http.post('/api/calendar/event', event, {
       headers: new HttpHeaders().set('Authorization', this.token)
     })

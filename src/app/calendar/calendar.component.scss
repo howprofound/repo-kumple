@@ -27,7 +27,6 @@
 }
 
 .mat-toolbar {
-	transform: translateX(0);
 	box-shadow: 0 3px 6px rgba(0,0,0,.24);
 	position: relative;
 	z-index: 10;
@@ -35,5 +34,31 @@
 		flex: 1 1 auto;
 	}
 }
-
+.nav-event-section {
+	display: flex;
+	flex-direction: column;
+	h5 {
+		margin-left: 22px;
+		font-family: Tahoma, Verdana, Segoe, sans-serif;
+		color: grey;
+	}
+	.nav-row {
+		background-color: #fafafa;
+		display: flex;
+		flex-direction: column;
+		padding: 8px 12px;
+		font-size: 16px;
+		span.nav-text-wrapper {
+			font-family: Helvetica;
+			flex: 0 0 100%;
+			margin-left: 10px;
+		}
+		span.nav-date-wrapper {
+			flex: 0 0 100%;
+			margin-left: 10px;
+			color: grey;
+			font-size: 12px;
+		}	
+	}
+}
 

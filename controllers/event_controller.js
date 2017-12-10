@@ -1,5 +1,5 @@
 const Events = require('../models/event')
-
+const Users = require('../models/user')
 exports.get_events = (req, res) => {
     Events.find({ users: req.userID }, (error, events) => {
         if(error) {
@@ -8,10 +8,21 @@ exports.get_events = (req, res) => {
             })
         }
         else {
-            res.send({
-                status: "success",
-                events: events
+            Users.find({ _id: { $ne: req.userID }}, (usersError, users) => {
+                if(usersError) {
+                    res.send({
+                        status: "error"
+                    })
+                }
+                else {
+                    res.send({
+                        status: "success",
+                        events: events,
+                        users: users
+                    })
+                }
             })
+
         }
     })
 }
@@ -44,7 +55,7 @@ exports.add_event = (req, res) => {
                 status: "error"
             })
         }
-        else { // to do - socket
+        else {
             res.send({
                 status: "success",
                 event: event

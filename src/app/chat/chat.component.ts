@@ -100,8 +100,7 @@ export class ChatComponent implements OnInit {
 	onNewGroupClick() {
 		let dialogRef = this.dialog.open(NewGroupComponent, {
 			data: {
-				users: this.users,
-				title: "",
+				users: this.users
 			},
 			width: '600px',
 			height: 'auto'

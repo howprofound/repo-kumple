@@ -29,6 +29,7 @@ import { GroupConversationComponent } from './group-conversation/group-conversat
 import { ChatSidenavComponent } from './chat-sidenav/chat-sidenav.component';
 import { ConversationBodyComponent } from './conversation-body/conversation-body.component';
 import { FormatMessagesPipe } from './format-messages.pipe';
+import { UserResolverService } from '../user-resolver.service'
 
 
 const ROUTES = [
@@ -36,7 +37,10 @@ const ROUTES = [
     path: 'chat',
     component: ChatComponent,
     pathMach: "full",
-    canActivate: [AuthGuardService]
+    canActivate: [AuthGuardService],
+    resolve: {
+      user: UserResolverService
+    }
   },
 ];
 
@@ -75,7 +79,8 @@ const ROUTES = [
   providers: [
     ChatService,
     AuthService,
-    AuthGuardService
+    AuthGuardService,
+    UserResolverService
   ],
   
 })

@@ -24,6 +24,7 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { UserService } from './user.service';
 import { UserResolverService } from './user-resolver.service';
 
+
 const ROUTES = [
   {
     path: '',
