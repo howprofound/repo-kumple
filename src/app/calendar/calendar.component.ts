@@ -4,6 +4,7 @@ import { Options } from 'fullcalendar';
 import { CalendarService } from './calendar.service'
 import { MatDialog } from '@angular/material'
 import { NewEventComponent } from "./new-event/new-event.component"
+import { EventDetailsComponent } from "./event-details/event-details.component"
 import { ActivatedRoute } from '@angular/router';
 import { ChatService } from '../chat.service';
 
@@ -42,7 +43,7 @@ export class CalendarAppComponent implements OnInit{
         right: 'agendaDay,agendaWeek,month,listMonth'
       },
       eventColor: '#3f51b5',
-      scrollTime: '08:00'
+      scrollTime: '08:00',
     }
     this.isLoading = true;
     this.calendarService.getCalendarData().subscribe(data => {
@@ -50,13 +51,18 @@ export class CalendarAppComponent implements OnInit{
         this.events = data['events']
         this.users = data['users']
         this.events.forEach(event => this.addEventToCalendar(event))
-        this.isLoading = false
+        this.isLoading = false;
       }
     })
     this.chatService.connect()
     this.chatService.joinCalendar()
     this.chatService.getMessages().subscribe(message => {
       this.newChatMessage = true;
+    })
+    this.chatService.getNewEvents().subscribe(event => {
+      this.events.push(event)
+      this.addEventToCalendar(event)
+      this.renderEvent()
     })
   }
   addEventToCalendar(event) {
@@ -67,10 +73,24 @@ export class CalendarAppComponent implements OnInit{
       end: new Date(event.endTime)
     })
   }
+  onCalendarEventClick(event) {
+    let tmpEvent = this.events.find(dataEvent => dataEvent._id === event.id)
+    if(tmpEvent) {
+      this.onEventClick(tmpEvent)
+    }
+  }
+
+  onEventClick(event) {
+    let dialogRef = this.dialog.open(EventDetailsComponent, {
+      data: {
+        event: event
+      },
+      width: '600px'
+    })
+  }
 
   renderEvent() {
     this.calendar.fullCalendar('renderEvent', this.calendarOptions.events[this.calendarOptions.events.length-1])
-    console.log(this.calendar.fullCalendar('clientEvents'))
   }
 
   onDateSelect(event) {

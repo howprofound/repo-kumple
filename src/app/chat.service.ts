@@ -141,6 +141,15 @@ export class ChatService {
     }
   }
 
+  getNewEvents() {
+    let observable = new Observable(observer => {
+      this.socket.on('new_event', data => {
+        observer.next(data)
+      })
+    })
+    return observable
+  }
+
   joinChat(groups) {
     this.socket.emit('join_chat', {
       id: this.jwtHelper.decodeToken(this.token).id,

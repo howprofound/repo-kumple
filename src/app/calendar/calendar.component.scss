@@ -58,7 +58,11 @@
 			margin-left: 10px;
 			color: grey;
 			font-size: 12px;
-		}	
+		}
+		&:hover {
+			cursor: pointer;
+			background-color: lightgrey;
+		}
 	}
 }
 

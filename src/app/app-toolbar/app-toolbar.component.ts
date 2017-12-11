@@ -9,6 +9,7 @@ export class AppToolbarComponent implements OnInit {
   @Input () text: string;
   @Input () user;
   @Input () newChatMessage: boolean;
+  @Input () newCalendarEvent: boolean;
   constructor() { }
 
   ngOnInit() {

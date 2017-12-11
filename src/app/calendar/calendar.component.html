@@ -6,7 +6,7 @@
         </owl-date-time>
         <div class="nav-event-section">
             <h5>UPCOMING EVENTS</h5>
-            <div class="nav-row" *ngFor="let event of events" >
+            <div class="nav-row event" *ngFor="let event of events" (click)="onEventClick(event)">
                 <span class="nav-date-wrapper">{{event.beginTime | date:'medium'}}</span>
                 <span class="nav-text-wrapper">{{event.title}}</span>
             </div>
@@ -20,6 +20,6 @@
         </button>
   </mat-toolbar>
   <div class="main-content" *ngIf="!isLoading">
-    <ng-fullcalendar #calendar [options]="calendarOptions"></ng-fullcalendar>
+    <ng-fullcalendar #calendar [options]="calendarOptions" (eventClick)="onCalendarEventClick($event.detail.event)"></ng-fullcalendar>
   </div>
 </mat-sidenav-container>

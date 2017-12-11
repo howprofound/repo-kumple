@@ -2,7 +2,6 @@ const path = require('path')
 const socketioJwt = require('socketio-jwt')
 const jwt = require('jsonwebtoken')
 const fs = require('fs')
-
 const chat_controller = require('../controllers/chat_controller')
 
 module.exports = (app, db, io) => {

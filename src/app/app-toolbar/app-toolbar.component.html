@@ -1,7 +1,7 @@
 <mat-toolbar color="primary">
   <span>{{text}}</span>
   <span class="toolbar-spacer"></span>
-  <mat-icon routerLink="/calendar">date_range</mat-icon>
+  <mat-icon routerLink="/calendar" [class.alert]="newCalendarEvent">date_range</mat-icon>
   <mat-icon routerLink="/chat" [class.alert]="newChatMessage">chat</mat-icon>
   <div class="user-wrapper">
     <img src="/images/{{user.avatar}}"/>

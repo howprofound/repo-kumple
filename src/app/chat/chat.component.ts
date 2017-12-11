@@ -43,20 +43,22 @@ export class ChatComponent implements OnInit {
 	currentChatPartner;
 	currentChatGroup;
 	currentChatUsers: Array<any>;
+	isNewEvent: boolean = false;
 	constructor(private chatService: ChatService, private authService: AuthService, public dialog: MatDialog, private route: ActivatedRoute) { }
 	onConnect(activeUsers) {
 		this.users = this.users.map(user => {
 			if(activeUsers.find(activeUser => activeUser.id === user._id)) {
-				return Object.assign(user, { isActive: true, unreadMessages: 0 })
+				return Object.assign(user, { isActive: true})
 			}
 			else {
-				return Object.assign(user, { unreadMessages: 0 })
+				return Object.assign(user, { isActive: false})
 			}
 		})
 		this.chatService.monitorUsers().subscribe(data => {
-			this.users
-				.find(user => user._id === data['id'])
-				.isActive = data['isActive']
+			let user = this.users.find(user => user._id === data['id'])
+			if(user) {
+				user.isActive = data['isActive']
+			}
 		})
 				
 		this.messageStream = this.chatService.getMessages().subscribe(message => {
@@ -81,6 +83,9 @@ export class ChatComponent implements OnInit {
 		})
 		this.isLoading = false
 		this.activeView = 'welcome'
+		this.chatService.getNewEvents().subscribe(event => {
+			this.isNewEvent = true;
+		})
 	}
 
 	startPrivateConversation(user) {

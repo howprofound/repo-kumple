@@ -2,8 +2,8 @@ const Users = require('../models/user')
 const Messages = require('../models/message')
 const Groups = require('../models/group')
 const GroupMessages = require('../models/group_message')
-
-var connectedUsers = require('../config/shared')
+var shared = require('../config/shared')
+var connectedUsers = shared.connectedUsers
 
 exports.load_chat_data = (req, res) => {
     let usersMessageCount = []
@@ -50,10 +50,10 @@ exports.load_chat_data = (req, res) => {
 }
 
 exports.chat_connection = (userData, socket) => {
-    socket.emit('connected_users', connectedUsers)
-    let user = connectedUsers.find(cUser => cUser.id === userData.id)
+    socket.emit('connected_users', connectedUsers.users)
+    let user = connectedUsers.users.find(cUser => cUser.id === userData.id)
     if(!user) {
-        connectedUsers.push({
+        connectedUsers.users.push({
             id: userData.id,
             socketId: socket.id,
             groups: userData.groups
@@ -67,7 +67,7 @@ exports.chat_connection = (userData, socket) => {
 
 exports.chat_disconnection = (socket) => {
     let dcUser
-    connectedUsers = connectedUsers.filter(user => {
+    connectedUsers.users = connectedUsers.users.filter(user => {
         if(user.socketId !== socket.id)
             return true
         else {
@@ -103,8 +103,8 @@ exports.new_message = (message, ack, socket) => {
                     console.log(populateErr)
                 }    
                 else {
-                    console.log(connectedUsers)
-                    let target = connectedUsers.find(user => user.id === message.recipient)
+                    console.log(connectedUsers.users)
+                    let target = connectedUsers.users.find(user => user.id === message.recipient)
                     if (target) {
                         console.log(target)
                         socket.broadcast.to(target.socketId).emit("new_message", messageInstance)
@@ -122,8 +122,9 @@ exports.message_seen = (data, socket) => {
             console.log("error")
         }
         else {
-            let target = connectedUsers.find(user => user.id === data.author)
+            let target = connectedUsers.users.find(user => user.id === data.author)
             if (target) {
+                console.log(target)
                 socket.broadcast.to(target.socketId).emit("message_seen", data.recipient)
             }
         }
@@ -148,9 +149,9 @@ exports.new_group_message = (message, ack, socket) => {
                     console.log("populateErr")
                 }
                 else {
-                    for (i in connectedUsers) {
-                        if(connectedUsers[i].groups.includes(message.groupId) && connectedUsers[i].id !== message.author){
-                            socket.broadcast.to(connectedUsers[i].socketId).emit("new_group_message", messageInstance)
+                    for (i in connectedUsers.users) {
+                        if(connectedUsers.users[i].groups.includes(message.groupId) && connectedUsers.users[i].id !== message.author){
+                            socket.broadcast.to(connectedUsers.users[i].socketId).emit("new_group_message", messageInstance)
                         }
                     }
                     ack(messageInstance._id)
@@ -168,9 +169,9 @@ exports.group_message_seen = (data, socket) => {
             console.log("error")
         }
         else {
-            for (i in connectedUsers) {
-                if(connectedUsers[i].groups.includes(data.groupId)) {
-                    socket.broadcast.to(connectedUsers[i].socketId).emit("group_message_seen", {
+            for (i in connectedUsers.users) {
+                if(connectedUsers.users[i].groups.includes(data.groupId)) {
+                    socket.broadcast.to(connectedUsers.users[i].socketId).emit("group_message_seen", {
                         groupId: data.groupId,
                         userId: data.userId
                     })
@@ -187,9 +188,9 @@ exports.add_user_to_group = (data, socket) => {
             console.log("error")
         }
         else {
-            for (i in connectedUsers) {
-                if(connectedUsers[i].groups.includes(data.groupId)) {
-                    socket.broadcast.to(connectedUsers[i].socketId).emit("add_user_to_group", {
+            for (i in connectedUsers.users) {
+                if(connectedUsers.users[i].groups.includes(data.groupId)) {
+                    socket.broadcast.to(connectedUsers.users[i].socketId).emit("add_user_to_group", {
                         groupId: data.groupId,
                         userId: data.userId
                     })
@@ -206,9 +207,9 @@ exports.delete_user_from_group = (data, socket) => {
             console.log("error")
         }
         else {
-            for (i in connectedUsers) {
-                if(connectedUsers[i].groups.includes(data.groupId)) {
-                    socket.broadcast.to(connectedUsers[i].socketId).emit("delete_user_from_group", {
+            for (i in connectedUsers.users) {
+                if(connectedUsers.users[i].groups.includes(data.groupId)) {
+                    socket.broadcast.to(connectedUsers.users[i].socketId).emit("delete_user_from_group", {
                         groupId: data.groupId,
                         userId: data.userId
                     })
@@ -225,9 +226,9 @@ exports.group_conversation_create = (data, socket, ack) => {
         }
         else {
             ack(group)
-            for (i in connectedUsers) {
-                if(data.users.includes(connectedUsers[i].id) && connectedUsers[i].socketId !== socket.id) {
-                    socket.broadcast.to(connectedUsers[i].socketId).emit('group_conversation_create', {
+            for (i in connectedUsers.users) {
+                if(data.users.includes(connectedUsers.users[i].id) && connectedUsers.users[i].socketId !== socket.id) {
+                    socket.broadcast.to(connectedUsers.users[i].socketId).emit('group_conversation_create', {
                         groupId: group._id,
                         title: group.title,
                         users: group.users
@@ -244,9 +245,9 @@ exports.group_conversation_remove = (data, socket) => {
             console.log("error")
         }
         else {
-            for (i in connectedUsers) {
-                if(connectedUsers[i].groups.includes(data.groupId)) {
-                    socket.broadcast.to(connectedUsers[i].socketId).emit("group_conversation_delete", {
+            for (i in connectedUsers.users) {
+                if(connectedUsers.users[i].groups.includes(data.groupId)) {
+                    socket.broadcast.to(connectedUsers.users[i].socketId).emit("group_conversation_delete", {
                         groupId: data.groupId,
                     })
                 }
@@ -256,12 +257,13 @@ exports.group_conversation_remove = (data, socket) => {
 }
 
 exports.calendar_connection = ( userId, socket) => {
-    let user = connectedUsers.find(cUser => cUser.id === userId)
+    let user = connectedUsers.users.find(cUser => cUser.id === userId)
     if(!user) {
-        connectedUsers.push({
+        connectedUsers.users.push({
             id: userId,
             socketId: socket.id,
             groups: []
         })
     }
+    console.log(connectedUsers.users)
 }

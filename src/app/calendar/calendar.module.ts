@@ -23,7 +23,8 @@ import {
 } from '@angular/material';
 import { NewEventComponent } from './new-event/new-event.component';
 import { UserResolverService } from '../user-resolver.service'
-import { SharedModule } from '../shared/shared.module'
+import { SharedModule } from '../shared/shared.module';
+import { EventDetailsComponent } from './event-details/event-details.component'
 const ROUTES = [
   {
     path: 'calendar',
@@ -56,11 +57,13 @@ const ROUTES = [
     SharedModule
   ],
   entryComponents: [
-    NewEventComponent
+    NewEventComponent,
+    EventDetailsComponent
   ],
   declarations: [
     CalendarAppComponent,
-    NewEventComponent
+    NewEventComponent,
+    EventDetailsComponent
   ],
   providers: [
     AuthService,

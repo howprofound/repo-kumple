@@ -1,8 +1,9 @@
 const Events = require('../models/event')
 const Users = require('../models/user')
-const io = require('socket.io')
+const shared = require('../config/shared')
+var connectedUsers = shared.connectedUsers
+var io = shared.io
 
-var connectedUsers = 
 exports.get_events = (req, res) => {
     Events.find({ users: req.userID }, (error, events) => {
         if(error) {
@@ -63,6 +64,13 @@ exports.add_event = (req, res) => {
                 status: "success",
                 event: event
             })
+            console.log(req.userID, connectedUsers)
+            connectedUsers.users.forEach(user => {
+                if(req.userID !== user.id && req.body.users.includes(user.id)) {
+                    io.to(user.socketId).emit("new_event", event)
+                }
+            })
+           
         }
     })
 }
