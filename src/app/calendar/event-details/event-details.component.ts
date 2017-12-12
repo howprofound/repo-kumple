@@ -7,6 +7,5 @@ import { MAT_DIALOG_DATA } from '@angular/material'
   styleUrls: ['./event-details.component.scss']
 })
 export class EventDetailsComponent {
-
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) { }
 }

@@ -53,6 +53,8 @@ exports.get_event = (req, res) => {
 }
 
 exports.add_event = (req, res) => {
+    req.body.createdBy = req.userID
+    req.body.going = []
     Events.create(req.body, (error, event) => {
         if(error) {
             res.send({
@@ -64,7 +66,6 @@ exports.add_event = (req, res) => {
                 status: "success",
                 event: event
             })
-            console.log(req.userID, connectedUsers)
             connectedUsers.users.forEach(user => {
                 if(req.userID !== user.id && req.body.users.includes(user.id)) {
                     io.to(user.socketId).emit("new_event", event)

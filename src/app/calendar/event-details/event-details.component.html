@@ -5,8 +5,20 @@
   </div>
   <hr>
   <div class="event-details-row">
+      <mat-checkbox>I am going!</mat-checkbox>
+  </div>
+  <hr>
+  <div class="event-details-row">
     <mat-icon class="event-details-icon">access_time</mat-icon>
-    <span class="event-date">{{data.event.beginTime | date:'longDate'}} - {{data.event.endTime | date:'longDate'}}</span>
+    <span class="event-date">{{data.event.beginTime | date:'short'}} - {{data.event.endTime | date:'short'}}</span>
+  </div>
+  <div class="event-details-row">
+    <mat-icon class="event-details-icon">location_on</mat-icon>
+    <span class="event-date">{{data.event.place || "No place specified for this event"}}</span>
+  </div>
+  <hr>
+  <div class="event-details-row">
+    <span class="event-description">{{data.event.description || "No description specified for this event"}}</span>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>

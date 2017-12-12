@@ -155,6 +155,8 @@ export class ChatComponent implements OnInit {
 		})
 	}
 	ngOnDestroy() {
-		this.messageStream.unsubscribe()
+		if(this.messageStream) {
+			this.messageStream.unsubscribe()
+		}
 	}
 }

@@ -20,7 +20,7 @@
     mat-icon { 
         color: rgba(0, 0, 0, 0.3);
         margin: 0 10px;
-        transition: all .2s ease-in-out;
+        transition: color .2s ease-in-out;
         &:hover {
             color: rgba(255, 255, 255, 0.87);
             cursor: pointer;
@@ -31,6 +31,7 @@
         }
     }
     .user-wrapper {
+        cursor: pointer;
         display: flex;
         align-items: center;
         img {

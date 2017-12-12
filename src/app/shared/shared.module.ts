@@ -4,7 +4,8 @@ import { AppToolbarComponent } from '../app-toolbar/app-toolbar.component';
 import { RouterModule } from '@angular/router';
 import { 
   MatIconModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MatMenuModule
 } from '@angular/material';
 
 @NgModule({
@@ -12,7 +13,8 @@ import {
     CommonModule,
     MatToolbarModule,
     MatIconModule,
-    RouterModule
+    MatMenuModule,
+    RouterModule,
   ],
   declarations: [
     AppToolbarComponent

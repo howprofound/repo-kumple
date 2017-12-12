@@ -19,7 +19,8 @@ import {
   MatIconModule,
   MatButtonModule,
   MatDialogModule,
-  MatListModule
+  MatListModule,
+  MatCheckboxModule
 } from '@angular/material';
 import { NewEventComponent } from './new-event/new-event.component';
 import { UserResolverService } from '../user-resolver.service'
@@ -54,7 +55,8 @@ const ROUTES = [
     MatButtonModule,
     MatDialogModule,
     MatListModule,
-    SharedModule
+    SharedModule,
+    MatCheckboxModule
   ],
   entryComponents: [
     NewEventComponent,
