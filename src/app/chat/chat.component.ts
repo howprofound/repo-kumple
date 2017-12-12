@@ -92,12 +92,15 @@ export class ChatComponent implements OnInit {
 		user.unreadMessages = 0
 		this.currentChatPartner = user
 		this.activeView = 'conversation'
+		this.currentChatUsers = []
+		this.currentChatGroup = null
 	}
 
 	startGroupConversation(group) {
 		group.unreadMessages = 0;
 		this.currentChatUsers = this.users.filter(user => (group.users.includes(user._id)))
 		this.currentChatGroup = group
+		this.currentChatPartner = null
 		this.activeView = 'group-conversation'
 	}
 
