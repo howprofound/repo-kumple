@@ -18,6 +18,8 @@ module.exports = () => {
     
     router.post('/event/add-user', event_controller.add_user_to_event)
 
+    router.put('/event/modify-going', event_controller.modify_going_list)
+
     router.post('/event/remove-user', event_controller.remove_user_from_event)
 
     router.delete('/event/:id', event_controller.remove_event)

@@ -1,0 +1,24 @@
+<h1 mat-dialog-title>Edit conversation members</h1>
+<mat-dialog-content>
+	<mat-list>
+		<mat-list-item *ngFor="let user of data.users">
+			<span matLine>{{user.firstName}} {{user.lastName}} 
+				<button mat-icon-button (click)="onDeleteUser(user)"><mat-icon>delete_forever</mat-icon></button>
+			</span> 
+			<span class="list-username" matLine>(@{{user.username}})</span>
+		</mat-list-item>
+	</mat-list>
+	<mat-form-field>
+		<mat-select placeholder="Add member" [(ngModel)]="selectedUser">
+			<mat-option *ngFor="let user of data.allUsers" [value]="user">
+				{{user.firstName}} {{user.lastName}} 
+			</mat-option>
+		</mat-select>
+	</mat-form-field>
+	<button mat-raised-button (click)="onAddUser()" color="primary"><mat-icon>add</mat-icon> Add</button>
+</mat-dialog-content>
+<mat-dialog-actions>
+  	<button mat-raised-button color="accent" mat-dialog-close>
+  		<mat-icon>cancel</mat-icon> Close
+  	</button>
+</mat-dialog-actions>

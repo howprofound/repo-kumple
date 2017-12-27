@@ -1,40 +1,21 @@
-const mongoose = require('mongoose')
-
-const Conversations = require('../models/conversation')
 const Messages = require('../models/message')
 const Groups = require('../models/group')
 const GroupMessages = require('../models/group_message')
 
 exports.conversation_history = (req, res) => {
-    Conversations.findOne({ users: { $all: [req.userID, req.params.id] }
-    }, (conversationErr, conversation) => {
-        if (conversationErr) {
+    Messages
+        .find({ $or: [
+            { $and: [{ recipient: req.userID }, { author: req.params.id }]},
+            { $and: [{ recipient: req.params.id }, { author: req.userID }]}
+        ]})
+        .populate('author', '_id username')
+        .exec((messagesErr, messages) => {
             res.send({
-                status: "error"
+                status: "success",
+                messages: messages,
+                user: req.userID
             })
-        }
-        else if (conversation) {
-            Messages
-                .find({ conversationId: conversation._id})
-                .populate('author', '_id username')
-                .exec((messagesErr, messages) => {
-                    res.send({
-                        status: "success",
-                        messages: messages,
-                        conversationId: conversation._id
-                    })
-                })
-        }
-        else {
-            Conversations.create({ title: "New", users: [req.userID, req.params.id]
-            }, (newConversationErr, newConversation) => {
-                res.send({
-                    status: "success",
-                    messages: []
-                })
-            })
-        }
-    })
+        })
 }
 
 exports.group_conversation_history = (req, res) => {
@@ -45,14 +26,16 @@ exports.group_conversation_history = (req, res) => {
             })
         }
         else if (group) {
-            GroupMessages.find({ groupId: group._id
-            }, (messagesErr, messages) => {
-                res.send({
-                    status: "success",
-                    messages: messages,
-                    groupId: group._id
+            GroupMessages
+                .find({ groupId: group._id})
+                .populate('author', '_id username')
+                .exec((messagesErr, messages)  => {
+                    res.send({
+                        status: "success",
+                        messages: messages,
+                        groupId: group._id
+                    })
                 })
-            })
         }
         else {
             res.send({

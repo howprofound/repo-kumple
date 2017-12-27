@@ -19,12 +19,19 @@ export class ChatService {
     this.token = localStorage.getItem('token')
   }
 
-  sendMessage(message, addresse, conversationId, ack) {
+  sendMessage(message, recipient, ack) {
     this.socket.emit('new_message', {
       content: message,
       author: this.jwtHelper.decodeToken(this.token).id,
-      addresse: addresse,
-      conversationId: conversationId
+      recipient: recipient
+    }, ack)
+  }
+
+  sendGroupMessage(message, groupId, ack) {
+    this.socket.emit('new_group_message', {
+      content: message,
+      author: this.jwtHelper.decodeToken(this.token).id,
+      groupId: groupId
     }, ack)
   }
 
@@ -41,8 +48,89 @@ export class ChatService {
     return observable
   }
 
-  sendSeenMessage(conversationId, author) {
-    this.socket.emit('message_seen', { conversationId: conversationId, author: author })
+  getMessages() {
+    let observable = new Observable(observer => {
+      this.socket.on('new_message', data => {
+        observer.next(data)
+      })
+      return () => {
+        this.socket.disconnect()
+      }
+    })
+    return observable
+  }
+
+  getGroupMessages() {
+    let observable = new Observable(observer => {
+      this.socket.on('new_group_message', data => {
+        observer.next(data)
+      })
+    })
+    return observable;
+  }
+
+  deleteUserFromGroup(groupId, user) {
+    this.socket.emit('delete_user_from_group', {
+      groupId: groupId,
+      userId: user._id
+    })
+  }
+
+  addUserToGroup(groupId, user) {
+    this.socket.emit('add_user_to_group', {
+      groupId: groupId,
+      userId: user._id
+    })
+  }
+
+  monitorAddGroupUsers() {
+    let observable = new Observable(observer => {
+      this.socket.on('add_user_to_group', data => {
+        console.log(data)
+        observer.next(data)
+      })
+    })
+    return observable
+  }
+
+  monitorAddedToGroup() {
+    let observable = new Observable(observer => {
+      this.socket.on('added_to_group', data => {
+        console.log(data)
+        observer.next(data)
+      })
+    })
+    return observable
+  }
+  monitorDeletedFromGroup() {
+    let observable = new Observable(observer => {
+      this.socket.on('deleted_from_group', data => {
+        console.log(data)
+        observer.next(data)
+      })
+    })
+    return observable
+  }
+
+  monitorDeleteGroupUsers() {
+    let observable = new Observable(observer => {
+      this.socket.on('delete_user_from_group', data => {
+        console.log(data)
+        observer.next(data)
+      })
+    })
+    return observable
+  }
+
+  sendSeenMessage(author, recipient) {
+    this.socket.emit('message_seen', { recipient: recipient, author: author })
+  }
+
+  sendSeenGroupMessage(groupId) {
+    this.socket.emit('group_message_seen', {
+      groupId: groupId,
+      userId: this.jwtHelper.decodeToken(this.token).id
+    })
   }
 
   getMessageSeen() {
@@ -50,9 +138,15 @@ export class ChatService {
       this.socket.on('message_seen', data => {
         observer.next(data)
       })
-      return () => {
-        this.socket.disconnect()
-      }
+    })
+    return observable
+  }
+
+  getGroupMessageSeen() {
+    let observable = new Observable(observer => {
+      this.socket.on('group_message_seen', data => {
+        observer.next(data)
+      })
     })
     return observable
   }
@@ -78,9 +172,6 @@ export class ChatService {
       this.socket.on('user_change', data => {
         observer.next(data)
       })
-      return () => {
-        this.socket.disconnect()
-      }
     })
     return observable
   }
@@ -90,39 +181,36 @@ export class ChatService {
       this.socket.on('connected_users', users => {
         observer.next(users)
       })
-      return () => {
-        console.log("test")
-        this.socket.off('connected_users')
-      }
     })
     return observable
   }
 
-  connect(groups) {
-  	this.socket = io.connect('', {
-      query: 'token=' + this.token
-    })
-    let id = this.jwtHelper.decodeToken(this.token).id
-    this.socket.on('connect', () => {
-      this.socket.emit('join', {
-        id: id,
-        groups: groups
+  connect() {
+    if(!this.socket || !this.socket.connected) {
+      this.socket = io.connect('', {
+        query: 'token=' + this.token
       })
-    })
-    return id
+    }
   }
 
-  getMessages() {
+  getNewEvents() {
     let observable = new Observable(observer => {
-      this.socket.on('new_message', data => {
-        console.log(data)
+      this.socket.on('new_event', data => {
         observer.next(data)
       })
-      return () => {
-        this.socket.disconnect()
-      }
     })
     return observable
+  }
+
+  joinChat(groups) {
+    this.socket.emit('join_chat', {
+      id: this.jwtHelper.decodeToken(this.token).id,
+      groups: groups
+    })
+  }
+
+  joinCalendar() { 
+    this.socket.emit('join_calendar', this.jwtHelper.decodeToken(this.token).id)
   }
 
   getChatData() {

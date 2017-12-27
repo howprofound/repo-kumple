@@ -1,6 +1,28 @@
-<mat-toolbar>@{{group.title}}</mat-toolbar>
+<mat-toolbar>
+	@{{group.title}}
+	<span class="toolbar-spacer"></span>
+	<button mat-icon-button [matMenuTriggerFor]="menu">
+		<mat-icon>more_vert</mat-icon>
+	</button>
+	<mat-menu #menu="matMenu">
+		<button mat-menu-item (click)="onEditMembersClick()">Edit members</button>
+	</mat-menu>
+</mat-toolbar>
 <mat-sidenav-container>
 	<mat-sidenav mode="side" opened="true" disableClose="true" position="end">
+		<h3>CONVERSATION MEMBERS</h3>
+		<hr/>
+		<ul class="conversation-users-list">	
+			<li *ngFor="let user of users">
+				<img src="/images/{{user.avatar}}"/>
+				<span class="user-wrapper">{{user.firstName}} {{user.lastName}}</span>
+			</li>
+		</ul>
 	</mat-sidenav>
-	<conversation-body [id]="id" [messages]="messagesToDisplay"></conversation-body>
+	<div class="conversation-container">
+		<mat-spinner *ngIf="isLoading" [diameter]="150"></mat-spinner>
+		<conversation-body *ngIf="!isLoading" [id]="id" [messages]="messages" (onSendMessage)="onSendMessage($event)">
+			
+		</conversation-body>
+	</div>
 </mat-sidenav-container>

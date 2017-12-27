@@ -6,15 +6,18 @@ import { MAT_DIALOG_DATA } from '@angular/material'
   styleUrls: ['./new-group.component.scss']
 })
 export class NewGroupComponent {
+	returnData = {
+		selectedUsers: [],
+		title: ""
+	}
 	constructor(@Inject(MAT_DIALOG_DATA) public data: any) { 
 	}
 	onUserSelect(user) {
-		console.log(user)
-		if(user.isSelected) {
-			user.isSelected = false
+		if(this.returnData.selectedUsers.includes(user._id)) {
+			this.returnData.selectedUsers.filter(selUser => selUser !== user._id)
 		}
 		else {
-			user.isSelected = true
+			this.returnData.selectedUsers.push(user._id)
 		}
 	}
 }
