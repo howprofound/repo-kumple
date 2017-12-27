@@ -44,7 +44,10 @@ export class ChatComponent implements OnInit {
 	currentChatGroup;
 	currentChatUsers: Array<any>;
 	isNewEvent: boolean = false;
-	constructor(private chatService: ChatService, private authService: AuthService, public dialog: MatDialog, private route: ActivatedRoute) { }
+	constructor(private chatService: ChatService, private authService: AuthService, 
+		public dialog: MatDialog, 
+		private route: ActivatedRoute
+	) { }
 	onConnect(activeUsers) {
 		this.users = this.users.map(user => {
 			if(activeUsers.find(activeUser => activeUser.id === user._id)) {
@@ -80,6 +83,35 @@ export class ChatComponent implements OnInit {
 		})
 		this.chatService.getNewGroupMessages().subscribe(group => {
 			this.groups.push(group)
+		})
+
+		this.chatService.monitorAddGroupUsers().subscribe(data => {
+			let editGroup = this.groups.find(group => group._id === data['groupId'])
+			let addUser = this.users.find(user => user._id === data['userId'])
+			if(!editGroup.users.find(user => user === data['userId'])) {
+				editGroup.users.push(addUser._id)
+				this.currentChatUsers.push(addUser)
+			}
+		})
+		this.chatService.monitorDeleteGroupUsers().subscribe(data => {
+			let editGroup = this.groups.find(group => group._id === data['groupId'])
+			let index = editGroup.users.indexOf(data['userId']);
+			if (index !== -1) {
+				editGroup.users.splice(index, 1)
+			}
+			index = this.currentChatUsers.findIndex(user => user._id === data['userId'])
+			if (index !== -1) {
+				this.currentChatUsers.splice(index, 1)
+			}
+		})
+		this.chatService.monitorAddedToGroup().subscribe(data => {
+			this.groups.push(data['group'])
+		})
+		this.chatService.monitorDeletedFromGroup().subscribe(data => {
+			this.groups = this.groups.filter(group => group._id !== data['groupId'])
+			if(this.currentChatGroup._id === data['groupId']) {
+				this.activeView = 'welcome'
+			}
 		})
 		this.isLoading = false
 		this.activeView = 'welcome'

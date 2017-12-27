@@ -76,6 +76,38 @@ exports.add_event = (req, res) => {
     })
 }
 
+exports.modify_going_list = (req, res) => {
+    let query = {}
+    if(req.body.going) {
+        query = { $addToSet: { going: req.userID } }
+    }
+    else {
+        query = { $pull: { going: req.userID} }
+    }
+    Events.findByIdAndUpdate(req.body.eventId, query, (err, event) => {
+        if(err) {
+            console.log(err)
+            res.send({
+                status: "error"
+            })
+        }
+        else {
+            res.send({
+                status: "success"
+            })
+            for(i in connectedUsers) {
+                if(connectedUsers[i].id !== req.userID && event.users.includes(connectedUsers[i].id)) {
+                    io.to(connectedUsers[i].socketId).emit('event_going_change', {
+                        eventId: req.body.eventId,
+                        going: req.body.going,
+                        user: req.userID
+                    })
+                }
+            }
+        }
+    })
+}
+
 exports.modify_event_info = (req, res) => {
     Events.findOneAndUpdate({ _id: req.body.id },
         { title: req.body.title, description: req.body.description }, (error, event) => {

@@ -22,6 +22,9 @@ export class CalendarAppComponent implements OnInit{
   users: Array<any> = []
   isLoading: boolean = true;
   newChatMessage: boolean = false;
+  pastEvents: Array<any> = []
+  upcomingEvents: Array<any> = []
+  ongoingEvents: Array<any> = []
   @ViewChild(CalendarComponent) calendar: CalendarComponent;
   constructor(private calendarService: CalendarService, public dialog: MatDialog, 
     private route: ActivatedRoute, private chatService: ChatService) { }
@@ -52,6 +55,7 @@ export class CalendarAppComponent implements OnInit{
         this.users = data['users']
         this.events.forEach(event => this.addEventToCalendar(event))
         this.isLoading = false;
+        this.sortEvents()
       }
     })
     this.chatService.connect()
@@ -65,12 +69,43 @@ export class CalendarAppComponent implements OnInit{
       this.renderEvent()
     })
   }
+  getEventColor(event) { 
+    let time = new Date()
+    if(new Date(event.beginTime) < time && new Date(event.endTime) > time) {
+      return '#3f8cb5'
+    }
+    else if(new Date(event.beginTime) > time) {
+      return '#3f51b5'
+    }
+    else {
+      return 'lightgrey'
+    }
+  }
+  sortEvents() {
+    this.pastEvents = []
+    this.upcomingEvents = []
+    this.ongoingEvents = []
+    let time = new Date()
+    this.events.forEach(event => {
+      if(new Date(event.beginTime) < time && new Date(event.endTime) > time) {
+        this.ongoingEvents.push(event)
+      }
+      else if(new Date(event.beginTime) > time) {
+        this.upcomingEvents.push(event)
+      }
+      else {
+        this.pastEvents.push(event)
+      }
+    })
+  }
   addEventToCalendar(event) {
     this.calendarOptions.events.push({
       id: event._id,
       title: event.title,
       start: new Date(event.beginTime),
-      end: new Date(event.endTime)
+      end: new Date(event.endTime),
+      backgroundColor: this.getEventColor(event),
+      borderColor: this.getEventColor(event)
     })
   }
   onCalendarEventClick(event) {
@@ -83,7 +118,9 @@ export class CalendarAppComponent implements OnInit{
   onEventClick(event) {
     let dialogRef = this.dialog.open(EventDetailsComponent, {
       data: {
-        event: event
+        event: event,
+        id: this.user._id,
+        going: event.going.includes(this.user._id)
       },
       width: '600px'
     })
@@ -116,10 +153,10 @@ export class CalendarAppComponent implements OnInit{
           users: data.selectedUsers
         }
         newEvent.users.push(this.user._id)
-
 				this.calendarService.createEvent(newEvent).subscribe(res => {
           if(res['status'] === "success") {
             this.events.push(res['event'])
+            this.sortEvents()
             this.addEventToCalendar(res['event'])
             this.renderEvent()
           }

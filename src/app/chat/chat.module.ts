@@ -16,7 +16,9 @@ import {
   MatSidenavModule,
   MatToolbarModule,
   MatChipsModule,
-  MatDialogModule
+  MatDialogModule,
+  MatMenuModule,
+  MatSelectModule
 } from '@angular/material';
 
 import { ChatService } from '../chat.service';
@@ -29,7 +31,8 @@ import { GroupConversationComponent } from './group-conversation/group-conversat
 import { ChatSidenavComponent } from './chat-sidenav/chat-sidenav.component';
 import { ConversationBodyComponent } from './conversation-body/conversation-body.component';
 import { UserResolverService } from '../user-resolver.service'
-import { SharedModule } from '../shared/shared.module'
+import { SharedModule } from '../shared/shared.module';
+import { EditMembersDialogComponent } from './edit-members-dialog/edit-members-dialog.component'
 const ROUTES = [
   {
     path: 'chat',
@@ -61,10 +64,13 @@ const ROUTES = [
     MatToolbarModule,
     MatChipsModule,
     MatDialogModule,
+    MatMenuModule,
+    MatSelectModule,
     SharedModule
   ],
   entryComponents: [
-    NewGroupComponent
+    NewGroupComponent,
+    EditMembersDialogComponent
   ],
   declarations: [    
     ChatComponent,
@@ -72,7 +78,8 @@ const ROUTES = [
     NewGroupComponent,
     GroupConversationComponent,
     ChatSidenavComponent,
-    ConversationBodyComponent
+    ConversationBodyComponent,
+    EditMembersDialogComponent
   ],
   providers: [
     ChatService,

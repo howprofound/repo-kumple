@@ -17,6 +17,6 @@
 		<conversation *ngSwitchCase="'conversation'" 
 			[id]="user._id" [convPartner]="currentChatPartner" [username]="username"></conversation>
 		<group-conversation *ngSwitchCase="'group-conversation'" 
-			[id]="user._id" [group]="currentChatGroup" [username]="username" [users]="currentChatUsers"></group-conversation>
+			[id]="user._id" [group]="currentChatGroup" [username]="username" [users]="currentChatUsers" [allUsers]="users"></group-conversation>
 	</div>
 </mat-sidenav-container>

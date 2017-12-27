@@ -1,0 +1,30 @@
+.mat-dialog-title {
+	border-bottom: 2px solid grey;
+}
+
+.mat-dialog-content {
+	display: flex;
+	justify-content: center;
+	flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.mat-list {
+	flex: 0 0 100%;
+}
+.mat-form-field {
+    flex: 1 1 80%;
+    padding-right: 20px;
+}
+.mat-list {
+    min-height: 200px;
+}
+.mat-dialog-actions {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.list-username {
+	color: lightgrey;
+}

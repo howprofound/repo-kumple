@@ -5,6 +5,7 @@ const GroupMessages = require('../models/group_message')
 var shared = require('../config/shared')
 var connectedUsers = shared.connectedUsers
 
+
 exports.load_chat_data = (req, res) => {
     let usersMessageCount = []
     let groupsMessageCount = []
@@ -29,9 +30,7 @@ exports.load_chat_data = (req, res) => {
             return Promise.all(groupsCount)
         }).then(groupsCount => {
             usersMessageCount.forEach((userMessageCount, index) => {
-                console.log(userMessageCount, usersCount[index])
                 userMessageCount.unreadMessages = usersCount[index]
-                console.log(userMessageCount)
             })
             groupsMessageCount.forEach((groupMessageCount, index) => {
                 groupMessageCount.unreadMessages = groupsCount[index]
@@ -86,7 +85,6 @@ exports.chat_disconnection = (socket) => {
 }
 
 exports.new_message = (message, ack, socket) => {
-    console.log(message)
     Messages.create({
         content: message.content,
         author: message.author,
@@ -103,10 +101,8 @@ exports.new_message = (message, ack, socket) => {
                     console.log(populateErr)
                 }    
                 else {
-                    console.log(connectedUsers.users)
                     let target = connectedUsers.users.find(user => user.id === message.recipient)
                     if (target) {
-                        console.log(target)
                         socket.broadcast.to(target.socketId).emit("new_message", messageInstance)
                     }
                     ack(messageInstance._id)
@@ -124,7 +120,6 @@ exports.message_seen = (data, socket) => {
         else {
             let target = connectedUsers.users.find(user => user.id === data.author)
             if (target) {
-                console.log(target)
                 socket.broadcast.to(target.socketId).emit("message_seen", data.recipient)
             }
         }
@@ -182,7 +177,7 @@ exports.group_message_seen = (data, socket) => {
 }
 
 exports.add_user_to_group = (data, socket) => {
-    Groups.findOneAndUpdate({ groupId: data.groupId },
+    Groups.findByIdAndUpdate(data.groupId,
         { $addToSet: { users: data.userId } }, (err, group) => {
         if(err) {
             console.log("error")
@@ -190,10 +185,16 @@ exports.add_user_to_group = (data, socket) => {
         else {
             for (i in connectedUsers.users) {
                 if(connectedUsers.users[i].groups.includes(data.groupId)) {
-                    socket.broadcast.to(connectedUsers.users[i].socketId).emit("add_user_to_group", {
+                    shared.io.to(connectedUsers.users[i].socketId).emit("add_user_to_group", {
                         groupId: data.groupId,
                         userId: data.userId
                     })
+                }
+                else if(connectedUsers.users[i].id === data.userId) {
+                    shared.io.to(connectedUsers.users[i].socketId).emit("added_to_group", {
+                        group: group
+                    })
+                    connectedUsers.users[i].groups.push(data.groupId)
                 }
             }
         }
@@ -201,15 +202,21 @@ exports.add_user_to_group = (data, socket) => {
 }
 
 exports.delete_user_from_group = (data, socket) => {
-    Groups.findOneAndUpdate({ groupId: data.groupId },
+    Groups.findByIdAndUpdate(data.groupId,
         { $pull: { users: data.userId } }, (err, group) => {
         if(err) {
             console.log("error")
         }
         else {
             for (i in connectedUsers.users) {
-                if(connectedUsers.users[i].groups.includes(data.groupId)) {
-                    socket.broadcast.to(connectedUsers.users[i].socketId).emit("delete_user_from_group", {
+                if(connectedUsers.users[i].id === data.userId) {
+                    connectedUsers.users[i].groups = connectedUsers.users[i].groups.filter(uGroup => uGroup !== data.groupId)
+                    shared.io.to(connectedUsers.users[i].socketId).emit("deleted_from_group", {
+                        groupId: data.groupId
+                    })
+                }
+                else if(connectedUsers.users[i].groups.includes(data.groupId)) {
+                    shared.io.to(connectedUsers.users[i].socketId).emit("delete_user_from_group", {
                         groupId: data.groupId,
                         userId: data.userId
                     })
@@ -265,5 +272,4 @@ exports.calendar_connection = ( userId, socket) => {
             groups: []
         })
     }
-    console.log(connectedUsers.users)
 }

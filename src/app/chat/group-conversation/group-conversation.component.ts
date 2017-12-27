@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ChatService } from '../../chat.service'
+import { MatDialog } from '@angular/material'
+import { EditMembersDialogComponent } from '../edit-members-dialog/edit-members-dialog.component'
 
 @Component({
   selector: 'group-conversation',
@@ -11,12 +13,13 @@ export class GroupConversationComponent implements OnInit {
   @Input() group;
   @Input() username: string;
   @Input() users: Array<any>;
+  @Input() allUsers: Array<any>;
   messages: Array<any> = [];
   messagesToDisplay: Array<any> = [];
   messageStream;
   isLoading: boolean;
 
-  constructor(private chatService: ChatService) { }
+  constructor(private chatService: ChatService, public dialog: MatDialog, ) { }
 
   getHistory() {
     this.isLoading = true
@@ -54,6 +57,17 @@ export class GroupConversationComponent implements OnInit {
 			date: Date.now()
     })
   }
+  onEditMembersClick() {
+    let dialogRef = this.dialog.open(EditMembersDialogComponent, {
+			data: {
+        users: this.users,
+        groupId: this.group._id,
+        allUsers: this.allUsers
+			},
+			width: '600px',
+			height: 'auto'
+		})
+  }
   ngOnInit() {
     this.getHistory()
     this.messageStream = this.chatService.messageAnnounced.subscribe(message => {
@@ -68,6 +82,6 @@ export class GroupConversationComponent implements OnInit {
           }
         }) 
       }
-		})
+    })
   }
 }

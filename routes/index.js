@@ -47,5 +47,6 @@ module.exports = (app, db, io) => {
 		socket.on("delete_user_from_group", data => chat_controller.delete_user_from_group(data, socket))
 		socket.on("group_conversation_create", (data, ack) => chat_controller.group_conversation_create(data, socket, ack))
 		socket.on("group_conversation_delete", data => chat_controller.group_conversation_delete(data, socket))
+		
 	})
 }

@@ -5,7 +5,7 @@
   </div>
   <hr>
   <div class="event-details-row">
-      <mat-checkbox>I am going!</mat-checkbox>
+      <mat-checkbox (change)="onChangeGoing($event)" [(ngModel)]="this.data.going">I am going!</mat-checkbox>
   </div>
   <hr>
   <div class="event-details-row">

@@ -69,6 +69,58 @@ export class ChatService {
     return observable;
   }
 
+  deleteUserFromGroup(groupId, user) {
+    this.socket.emit('delete_user_from_group', {
+      groupId: groupId,
+      userId: user._id
+    })
+  }
+
+  addUserToGroup(groupId, user) {
+    this.socket.emit('add_user_to_group', {
+      groupId: groupId,
+      userId: user._id
+    })
+  }
+
+  monitorAddGroupUsers() {
+    let observable = new Observable(observer => {
+      this.socket.on('add_user_to_group', data => {
+        console.log(data)
+        observer.next(data)
+      })
+    })
+    return observable
+  }
+
+  monitorAddedToGroup() {
+    let observable = new Observable(observer => {
+      this.socket.on('added_to_group', data => {
+        console.log(data)
+        observer.next(data)
+      })
+    })
+    return observable
+  }
+  monitorDeletedFromGroup() {
+    let observable = new Observable(observer => {
+      this.socket.on('deleted_from_group', data => {
+        console.log(data)
+        observer.next(data)
+      })
+    })
+    return observable
+  }
+
+  monitorDeleteGroupUsers() {
+    let observable = new Observable(observer => {
+      this.socket.on('delete_user_from_group', data => {
+        console.log(data)
+        observer.next(data)
+      })
+    })
+    return observable
+  }
 
   sendSeenMessage(author, recipient) {
     this.socket.emit('message_seen', { recipient: recipient, author: author })

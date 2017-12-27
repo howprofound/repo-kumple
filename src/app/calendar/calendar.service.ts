@@ -19,4 +19,11 @@ export class CalendarService {
       headers: new HttpHeaders().set('Authorization', this.token)
     })
   }
+  changeGoingToEvent(eventId, going) {
+    console.log(eventId)
+    return this.http.put('api/calendar/event/modify-going', {
+      eventId: eventId,
+      going: going
+    }, { headers: new HttpHeaders().set('Authorization', this.token) })
+  }
 }

@@ -15,7 +15,7 @@ const sendStatusAndUnlink = (req, res, status = "error") => {
 }
 
 const processAvatar = (file) => {
-    jimp.read(file.destination + file.filename)
+    return jimp.read(file.destination + file.filename)
 }
 
 const createUser = (req, res) => {
