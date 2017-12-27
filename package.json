@@ -43,7 +43,8 @@
     "socket.io": "^2.0.4",
     "socket.io-client": "^2.0.4",
     "socketio-jwt": "^4.5.0",
-    "zone.js": "^0.8.4"
+    "zone.js": "^0.8.4",
+    "typescript": "~2.3.3"
   },
   "devDependencies": {
     "@angular/language-service": "^4.4.6",
