@@ -1,0 +1,44 @@
+@keyframes pulsate {
+    from {
+        transform: scale(1); 
+        color: rgba(0, 0, 0, 0.3);
+    }
+    to {
+        transform: scale(1.3);
+        color: rgb(179, 58, 58);
+    }
+}
+
+.mat-toolbar {
+	transform: translateX(0);
+	box-shadow: 0 3px 6px rgba(0,0,0,.24);
+	position: relative;
+	z-index: 10;
+	.toolbar-spacer {
+		flex: 1 1 auto;
+    }
+    mat-icon { 
+        color: rgba(0, 0, 0, 0.3);
+        margin: 0 10px;
+        transition: color .2s ease-in-out;
+        &:hover {
+            color: rgba(255, 255, 255, 0.87);
+            cursor: pointer;
+        }
+        &.alert {
+            color: rgb(179, 58, 58);
+            animation: pulsate 2s infinite alternate;
+        }
+    }
+    .user-wrapper {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        img {
+            width: 30px;
+            height: 30px;
+            border-radius: 30px;
+            margin: 0px 10px;
+        }
+    }
+}

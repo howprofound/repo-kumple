@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
 				case "success":
 					localStorage.setItem('token', data['token'])
 					this.auth.username = value.username
-					this.router.navigate(['/chat'])
+					this.router.navigate(['/welcome'])
 					break;
 				default: 
 					this.openSnackBar("Oops. Something went wrong :(")

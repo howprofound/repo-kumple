@@ -14,7 +14,7 @@
 .classpath
 .c9/
 *.launch
-.settings/
+.settings
 *.sublime-workspace
 
 # IDE - VSCode
@@ -42,4 +42,4 @@ testem.log
 Thumbs.db
 
 #confi
-/config
+/config/db.js

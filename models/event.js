@@ -6,6 +6,15 @@ var EventSchema = new mongoose.Schema({
     place: String,
     beginTime: { type: Date, default: Date.now },
     endTime: { type: Date, default: Date.now },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    going: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
     users: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

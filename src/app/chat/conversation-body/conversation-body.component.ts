@@ -14,18 +14,26 @@ export class ConversationBodyComponent implements  AfterViewChecked {
   @Output() onSendMessage = new EventEmitter<any>()
   constructor() { }
 
-
   scrollToBottom(): void {
     try {
         this.conversationBody.nativeElement.scrollTop = this.conversationBody.nativeElement.scrollHeight;
     } catch(err) { 
     }                 
   }
+
   getMessageStatus(message) {
-    console.log(this.messages)
 		if(message.wasSeen) {
 			return "Seen"
-		}
+    }
+    else if(message.wasSeenBy && message.wasSeenBy.length > 1) {
+      let status = "Seen by " + (message.wasSeenBy.length - 1)
+      if(message.wasSeenBy.length === 2) {
+        return status + " person"
+      }
+      else {
+        return status + " people"
+      }
+    }
 		else if(message.wasDelivered) {
 			return "Delivered"
 		}
@@ -37,6 +45,21 @@ export class ConversationBodyComponent implements  AfterViewChecked {
   ngAfterViewChecked() {
     this.scrollToBottom();
   }
+
+  formatMessages(messages) {
+    let messagesToDisplay = []
+    messages.forEach(message => {
+      message.date = new Date(message.date)
+      if(messagesToDisplay.length === 0 || messagesToDisplay[messagesToDisplay.length - 1][0].author._id !== message.author._id) {
+        messagesToDisplay.push([message])
+      }
+      else {
+        messagesToDisplay[messagesToDisplay.length - 1].push(message)
+      }
+    })
+    return messagesToDisplay
+  }
+  
   sendMessage(e) {
 		if(e.keyCode === 13) {
 			this.onSendMessage.emit(this.message)

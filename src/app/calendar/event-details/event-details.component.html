@@ -1,0 +1,28 @@
+<mat-dialog-content>
+  <div class="event-details-row">
+    <span class="event-shortdate">{{data.event.beginTime | date:'MMM d'}}</span>
+    <span class="event-title">{{data.event.title}}</span>
+  </div>
+  <hr>
+  <div class="event-details-row">
+      <mat-checkbox (change)="onChangeGoing($event)" [(ngModel)]="this.data.going">I am going!</mat-checkbox>
+  </div>
+  <hr>
+  <div class="event-details-row">
+    <mat-icon class="event-details-icon">access_time</mat-icon>
+    <span class="event-date">{{data.event.beginTime | date:'short'}} - {{data.event.endTime | date:'short'}}</span>
+  </div>
+  <div class="event-details-row">
+    <mat-icon class="event-details-icon">location_on</mat-icon>
+    <span class="event-date">{{data.event.place || "No place specified for this event"}}</span>
+  </div>
+  <hr>
+  <div class="event-details-row">
+    <span class="event-description">{{data.event.description || "No description specified for this event"}}</span>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button color="primary" mat-dialog-close>
+    Close
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,39 @@
+<app-toolbar text="AwesomeCalendar" [user]="user" [newChatMessage]="newChatMessage">
+</app-toolbar>
+<mat-sidenav-container>
+  <mat-sidenav mode="side" disableClose="true" opened="true">
+        <owl-date-time inline="true" type="calendar" (onSelect)="onDateSelect($event)">
+        </owl-date-time>
+        <div class="nav-event-section" *ngIf="ongoingEvents.length > 0">
+            <h5>ONGOING EVENTS</h5>
+            <div class="nav-row event" *ngFor="let event of ongoingEvents" (click)="onEventClick(event)">
+                <span class="nav-date-wrapper">{{event.beginTime | date:'medium'}}</span>
+                <span class="nav-text-wrapper">{{event.title}}</span>
+            </div>
+        </div>
+        <div class="nav-event-section" *ngIf="upcomingEvents.length > 0">
+            <h5>UPCOMING EVENTS</h5>
+            <div class="nav-row event" *ngFor="let event of upcomingEvents" (click)="onEventClick(event)">
+                <span class="nav-date-wrapper">{{event.beginTime | date:'medium'}}</span>
+                <span class="nav-text-wrapper">{{event.title}}</span>
+            </div>
+        </div>
+        <div class="nav-event-section" *ngIf="pastEvents.length > 0">
+            <h5>PAST EVENTS</h5>
+            <div class="nav-row event" *ngFor="let event of pastEvents" (click)="onEventClick(event)">
+                <span class="nav-date-wrapper">{{event.beginTime | date:'medium'}}</span>
+                <span class="nav-text-wrapper">{{event.title}}</span>
+            </div>
+        </div>
+  </mat-sidenav>
+  <mat-toolbar>
+        <span class="toolbar-spacer"></span>
+        <button mat-raised-button color="primary" (click)="onNewEventClick()">
+            Add event
+            <mat-icon>add</mat-icon>
+        </button>
+  </mat-toolbar>
+  <div class="main-content" *ngIf="!isLoading">
+    <ng-fullcalendar #calendar [options]="calendarOptions" (eventClick)="onCalendarEventClick($event.detail.event)"></ng-fullcalendar>
+  </div>
+</mat-sidenav-container>

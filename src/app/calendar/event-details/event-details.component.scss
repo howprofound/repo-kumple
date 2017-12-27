@@ -1,0 +1,39 @@
+.mat-dialog-actions {
+	display: flex;
+	justify-content: flex-end;
+}
+.mat-dialog-content {
+    display: flex;
+    flex-wrap: wrap;
+    hr {
+        width: 100%;
+    }
+    .event-details-row {
+        font-family: Roboto,"Helvetica Neue",sans-serif;
+        font-size: 18px;
+        flex: 0 0 100%;
+        display: flex;
+        align-items: center;
+        padding: 5px 0;
+        .event-title, .event-date {
+            flex: 1 1 100%;
+            padding-left: 20px;
+        }
+        .event-title {
+            font-size: 24px;
+        }
+        .event-shortdate, .event-details-icon {
+            text-align: center;
+        }
+        .event-details-icon {
+            color: lightgrey;
+        }
+        .event-description {
+            white-space: pre-wrap;
+        }
+        .mat-slide-toggle {
+            padding: 10px 0;
+            font-size: 24px;
+        }
+    }
+}

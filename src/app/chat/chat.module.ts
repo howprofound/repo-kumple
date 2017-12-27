@@ -16,7 +16,9 @@ import {
   MatSidenavModule,
   MatToolbarModule,
   MatChipsModule,
-  MatDialogModule
+  MatDialogModule,
+  MatMenuModule,
+  MatSelectModule
 } from '@angular/material';
 
 import { ChatService } from '../chat.service';
@@ -28,14 +30,18 @@ import { ChatComponent } from './chat.component'
 import { GroupConversationComponent } from './group-conversation/group-conversation.component';
 import { ChatSidenavComponent } from './chat-sidenav/chat-sidenav.component';
 import { ConversationBodyComponent } from './conversation-body/conversation-body.component';
-
-
+import { UserResolverService } from '../user-resolver.service'
+import { SharedModule } from '../shared/shared.module';
+import { EditMembersDialogComponent } from './edit-members-dialog/edit-members-dialog.component'
 const ROUTES = [
   {
     path: 'chat',
     component: ChatComponent,
     pathMach: "full",
-    canActivate: [AuthGuardService]
+    canActivate: [AuthGuardService],
+    resolve: {
+      user: UserResolverService
+    }
   },
 ];
 
@@ -57,10 +63,14 @@ const ROUTES = [
     MatSidenavModule,
     MatToolbarModule,
     MatChipsModule,
-    MatDialogModule
+    MatDialogModule,
+    MatMenuModule,
+    MatSelectModule,
+    SharedModule
   ],
   entryComponents: [
-    NewGroupComponent
+    NewGroupComponent,
+    EditMembersDialogComponent
   ],
   declarations: [    
     ChatComponent,
@@ -69,11 +79,13 @@ const ROUTES = [
     GroupConversationComponent,
     ChatSidenavComponent,
     ConversationBodyComponent,
+    EditMembersDialogComponent
   ],
   providers: [
     ChatService,
     AuthService,
-    AuthGuardService
+    AuthGuardService,
+    UserResolverService
   ],
   
 })

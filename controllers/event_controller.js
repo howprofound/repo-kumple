@@ -1,6 +1,8 @@
-const mongoose = require('mongoose')
-
 const Events = require('../models/event')
+const Users = require('../models/user')
+const shared = require('../config/shared')
+var connectedUsers = shared.connectedUsers
+var io = shared.io
 
 exports.get_events = (req, res) => {
     Events.find({ users: req.userID }, (error, events) => {
@@ -10,10 +12,21 @@ exports.get_events = (req, res) => {
             })
         }
         else {
-            res.send({
-                status: "success",
-                events: events
+            Users.find({ _id: { $ne: req.userID }}, (usersError, users) => {
+                if(usersError) {
+                    res.send({
+                        status: "error"
+                    })
+                }
+                else {
+                    res.send({
+                        status: "success",
+                        events: events,
+                        users: users
+                    })
+                }
             })
+
         }
     })
 }
@@ -40,17 +53,57 @@ exports.get_event = (req, res) => {
 }
 
 exports.add_event = (req, res) => {
+    req.body.createdBy = req.userID
+    req.body.going = []
     Events.create(req.body, (error, event) => {
         if(error) {
             res.send({
                 status: "error"
             })
         }
-        else { // to do - socket
+        else {
             res.send({
                 status: "success",
                 event: event
             })
+            connectedUsers.users.forEach(user => {
+                if(req.userID !== user.id && req.body.users.includes(user.id)) {
+                    io.to(user.socketId).emit("new_event", event)
+                }
+            })
+           
+        }
+    })
+}
+
+exports.modify_going_list = (req, res) => {
+    let query = {}
+    if(req.body.going) {
+        query = { $addToSet: { going: req.userID } }
+    }
+    else {
+        query = { $pull: { going: req.userID} }
+    }
+    Events.findByIdAndUpdate(req.body.eventId, query, (err, event) => {
+        if(err) {
+            console.log(err)
+            res.send({
+                status: "error"
+            })
+        }
+        else {
+            res.send({
+                status: "success"
+            })
+            for(i in connectedUsers) {
+                if(connectedUsers[i].id !== req.userID && event.users.includes(connectedUsers[i].id)) {
+                    io.to(connectedUsers[i].socketId).emit('event_going_change', {
+                        eventId: req.body.eventId,
+                        going: req.body.going,
+                        user: req.userID
+                    })
+                }
+            }
         }
     })
 }
